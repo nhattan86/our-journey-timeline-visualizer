@@ -1,0 +1,1791 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Hành Trình Yêu Thương</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Quicksand:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+  :root{
+    --sky-top:#FDEEF4; --sky-mid:#F1E6F9; --sky-bot:#E4EBFB;
+    --ink:#6B4A5C; --ink-soft:#8A6779;
+    --muted:#B39AA9; --muted2:#D8C3D0;
+    --gold:#DDA968; --gold-soft:#EFCB9A;
+    --rose:#F2A6C6; --rose-deep:#E888B2;
+    --lilac:#C7A8E8;
+    --panel: rgba(255,248,251,0.62);
+    --panel-strong: rgba(255,248,251,0.88);
+    --panel-border: rgba(221,169,104,0.32);
+    --shadow-soft: 0 10px 34px rgba(180,120,150,0.22);
+    --blue-primary: #2196F3;
+    --orange-trail: #FF6D00;
+  }
+
+  *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+  html,body{
+    margin:0; padding:0; width:100%; height:100%; overflow:hidden;
+    background: radial-gradient(ellipse 120% 80% at 50% -6%, var(--sky-top) 0%, var(--sky-mid) 46%, var(--sky-bot) 100%);
+    color:var(--ink); font-family:'Quicksand', system-ui, sans-serif;
+  }
+  #stage{ position:fixed; inset:0; }
+  canvas{ display:block; }
+
+  #vignette{
+    position:fixed; inset:0; pointer-events:none; z-index:5;
+    background:
+      radial-gradient(ellipse at 50% 48%, rgba(255,255,255,0) 40%, rgba(232,150,190,0.10) 100%),
+      linear-gradient(180deg, rgba(253,238,244,0.65) 0%, rgba(253,238,244,0) 16%, rgba(253,238,244,0) 76%, rgba(228,235,251,0.7) 100%);
+  }
+
+  #hud{ position:fixed; inset:0; z-index:10; pointer-events:none; transition: opacity .5s ease; }
+  #hud > *{ pointer-events:auto; }
+  #hud.hud-hidden{ opacity:0; pointer-events:none; }
+
+  #header{
+    position:absolute; top:0; left:0; right:0;
+    padding: 20px 26px 0 26px;
+    display:flex; align-items:flex-start; justify-content:space-between; gap:14px;
+    animation: floatIn .8s ease both;
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--gold); opacity:.9; margin:0 0 5px 0; display:flex; align-items:center; gap:6px;
+  }
+  .eyebrow svg{ width:10px; height:10px; }
+  h1{
+    margin:0; font-family:'Cormorant Garamond', serif; font-weight:700; font-style:italic;
+    font-size: clamp(24px, 4.2vw, 36px); letter-spacing:0.005em; line-height:1; color:var(--ink);
+    text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+  }
+  #sub{
+    margin:8px 0 0 0; font-size:12px; color:var(--ink-soft); max-width:340px; line-height:1.5; font-weight:500;
+  }
+
+  #statbar{ display:flex; gap:14px; margin-top:10px; flex-wrap:wrap; }
+  .stat-chip{ display:flex; flex-direction:column; }
+  .stat-chip .v{ font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:700; color:var(--blue-primary); line-height:1.1; }
+  .stat-chip .k{ font-size:8.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; margin-top:1px; }
+
+  .headerRight{ display:flex; flex-direction:column; align-items:flex-end; gap:10px; }
+
+  #legend{
+    display:flex; flex-direction:column; gap:6px;
+    background:var(--panel); border:1px solid var(--panel-border);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border-radius:16px; padding:11px 13px; min-width:168px;
+    box-shadow: var(--shadow-soft);
+  }
+  .legend-row{ display:flex; align-items:center; gap:8px; font-size:11px; color:var(--ink-soft); font-weight:500; }
+  .legend-row b{ color:var(--ink); font-weight:700; font-family:'JetBrains Mono',monospace; margin-left:auto; }
+  .legend-row.featured{ color:var(--gold); font-weight:700; cursor:pointer; }
+  .legend-row.featured:hover{ color:var(--blue-primary); }
+  .legend-home-dist{ font-size:10px; color:var(--muted); padding-top:2px; border-top:1px dashed var(--panel-border); margin-top:2px; }
+  .dot{ width:9px; height:9px; border-radius:50%; flex:0 0 auto; box-shadow:0 0 9px currentColor; }
+
+  #uploadbtn, .feat-btn{
+    font-family:'Quicksand', sans-serif; font-weight:600; font-size:11.5px; color:var(--ink);
+    background:var(--panel-strong); border:1px solid var(--panel-border); border-radius:999px;
+    padding:9px 16px; cursor:pointer; display:flex; align-items:center; gap:7px;
+    box-shadow: var(--shadow-soft); transition: transform .15s ease, box-shadow .2s ease, background .2s ease;
+  }
+  #uploadbtn:hover, .feat-btn:hover{ transform:translateY(-1px); box-shadow:0 12px 30px rgba(242,166,198,0.3); }
+  #uploadbtn:active, .feat-btn:active{ transform:translateY(0px) scale(0.97); }
+  #uploadbtn svg{ width:13px; height:13px; color:var(--gold); }
+  
+  .feat-btn.active { 
+    background: linear-gradient(135deg, var(--rose), var(--gold)); 
+    color: #fff; 
+    border: none;
+    box-shadow: 0 6px 20px rgba(242,166,198,0.4);
+  }
+
+  #compass{ width:46px; height:46px; filter: drop-shadow(0 6px 14px rgba(180,120,150,0.28)); flex:0 0 auto; }
+  #compass svg{ display:block; width:100%; height:100%; }
+
+  #stopcard{
+    position:absolute; left:26px; top:50%; transform:translateY(-50%);
+    width: min(300px, 78vw);
+    background:var(--panel); border:1px solid var(--panel-border);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border-radius:20px; padding:20px 20px 17px 20px;
+    box-shadow: var(--shadow-soft);
+    transition: opacity .35s ease;
+    animation: floatIn .9s ease .12s both;
+  }
+  #stopcard .idx{
+    font-family:'JetBrains Mono', monospace; font-size:10.5px; color:var(--gold);
+    letter-spacing:.08em; margin-bottom:9px; display:flex; align-items:center; gap:8px;
+  }
+  #stopcard .idx .bar{ flex:1; height:1.5px; background:linear-gradient(90deg, var(--gold), transparent); border-radius:2px; }
+  #stopcard .name{
+    font-family:'Cormorant Garamond', serif; font-weight:700; font-size:19px; line-height:1.28;
+    color:var(--ink); margin-bottom:11px; word-break:break-word;
+  }
+  #stopcard .coords{ font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--muted); letter-spacing:.02em; }
+  #stopcard .delta{ margin-top:8px; font-size:11px; color:var(--blue-primary); font-weight:600; display:flex; align-items:center; gap:5px; }
+  #stopcard .delta svg{ width:10px; height:10px; }
+  #stopcard .cum{ margin-top:4px; font-size:10px; color:var(--muted); }
+
+  @keyframes stopFade{ from{ opacity:0; transform:translateY(5px); } to{ opacity:1; transform:translateY(0); } }
+  #stopcard.anim .name, #stopcard.anim .coords, #stopcard.anim .idx, #stopcard.anim .delta, #stopcard.anim .cum{
+    animation: stopFade .4s ease;
+  }
+
+  #timeline-wrap{
+    position:absolute; left:0; right:0; bottom:0; padding: 10px 18px 18px 18px;
+    background: linear-gradient(180deg, rgba(228,235,251,0) 0%, rgba(228,235,251,0.55) 42%, rgba(228,235,251,0.92) 100%);
+    animation: floatIn .9s ease .22s both;
+  }
+  #controls{ display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+  #playbtn{
+    width:40px; height:40px; border-radius:50%; border:1px solid var(--panel-border);
+    background:var(--panel-strong); color:var(--rose-deep); cursor:pointer;
+    display:flex; align-items:center; justify-content:center; flex:0 0 auto;
+    box-shadow: var(--shadow-soft); transition: transform .15s ease;
+  }
+  #playbtn:hover{ transform:scale(1.05); }
+  #playbtn:active{ transform:scale(0.92); }
+  #playbtn svg{ width:14px; height:14px; }
+
+  #speedbtn{
+    font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--ink-soft); font-weight:600;
+    background:var(--panel); border:1px solid var(--panel-border); border-radius:10px;
+    padding:8px 10px; cursor:pointer; flex:0 0 auto;
+  }
+
+  #readout{
+    font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--ink); font-weight:500;
+    white-space:nowrap; flex:0 0 auto; letter-spacing:.02em; max-width: 28vw; overflow:hidden; text-overflow:ellipsis;
+  }
+  #readout span{ color:var(--muted); }
+
+  #scrub{
+    flex:1; -webkit-appearance:none; appearance:none; height:4px; border-radius:3px;
+    background: linear-gradient(90deg, var(--orange-trail) var(--pct,0%), rgba(216,195,208,0.5) var(--pct,0%));
+    outline:none; cursor:pointer;
+  }
+  #scrub::-webkit-slider-thumb{
+    -webkit-appearance:none; width:15px; height:15px; border-radius:50%;
+    background: radial-gradient(circle at 35% 30%, #fff, var(--orange-trail));
+    box-shadow:0 0 10px rgba(255,109,0,0.6), 0 0 0 4px rgba(255,109,0,0.15);
+    cursor:grab; margin-top:-5.5px; border:1px solid rgba(255,255,255,0.8);
+  }
+  #scrub::-webkit-slider-thumb:active{ cursor:grabbing; }
+  
+  #scrub::-moz-range-thumb{
+    width:15px; height:15px; border-radius:50%; border:1px solid rgba(255,255,255,0.8);
+    background: radial-gradient(circle at 35% 30%, #fff, var(--orange-trail));
+    box-shadow:0 0 10px rgba(255,109,0,0.6); cursor:grab;
+  }
+  #scrub::-moz-range-track{ height:4px; border-radius:3px; background:rgba(216,195,208,0.5); }
+
+  #ticks{ display:flex; gap:4px; overflow-x:auto; padding-bottom:2px; scrollbar-width:none; }
+  #ticks::-webkit-scrollbar{ display:none; }
+  .tick{
+    flex:0 0 auto; width:7px; height:7px; border-radius:50%; cursor:pointer; margin-top:5px;
+    transition: transform .2s ease, box-shadow .2s ease; opacity:0.55;
+  }
+  .tick.featured{ width:9px; height:9px; }
+  .tick.active{ transform:scale(1.8); box-shadow:0 0 8px currentColor; opacity:1; }
+
+  .marker-label{
+    position:absolute; transform:translate(-50%,-100%); pointer-events:none;
+    font-family:'Quicksand',sans-serif; font-size:11.5px; font-weight:600; color:var(--ink);
+    background:var(--panel-strong); border:1px solid var(--panel-border);
+    padding:5px 10px; border-radius:10px; white-space:nowrap; max-width:200px;
+    overflow:hidden; text-overflow:ellipsis; backdrop-filter: blur(6px);
+    box-shadow: var(--shadow-soft); transition: opacity .15s ease;
+  }
+  .marker-label.featured{ border-color: var(--gold); color:#8a6420; font-weight:700; }
+
+  #hint{
+    position:absolute; top:150px; right:26px;
+    font-family:'JetBrains Mono',monospace; font-size:9.5px; color:var(--muted);
+    letter-spacing:.05em; text-align:right; max-width:150px; line-height:1.7;
+    opacity:0; transition:opacity 1s ease;
+  }
+
+  #toast{
+    position:fixed; left:50%; bottom:110px; transform:translateX(-50%) translateY(10px);
+    background:var(--panel-strong); border:1px solid var(--panel-border); border-radius:14px;
+    padding:11px 18px; font-size:12px; color:var(--ink); font-weight:600; z-index:70;
+    box-shadow: var(--shadow-soft); opacity:0; pointer-events:none; transition: opacity .3s ease, transform .3s ease;
+    max-width:80vw; text-align:center;
+  }
+  #toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  #loading{
+    position:fixed; inset:0; z-index:100;
+    background: radial-gradient(ellipse 120% 80% at 50% -6%, var(--sky-top) 0%, var(--sky-mid) 46%, var(--sky-bot) 100%);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px;
+    transition: opacity .6s ease;
+    display: none; opacity: 0;
+  }
+  #loading .l1{ font-family:'Cormorant Garamond',serif; font-size:16px; color:var(--ink-soft); font-style:italic; }
+  #loading .spin{
+    width:26px; height:26px; border-radius:50%;
+    border:2px solid rgba(33,150,243,0.25); border-top-color:var(--blue-primary);
+    animation:spin 0.9s linear infinite;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  /* ---- welcome / landing screen ---- */
+  #welcome{
+    position:fixed; inset:0; z-index:95;
+    background: radial-gradient(ellipse 120% 80% at 50% -6%, var(--sky-top) 0%, var(--sky-mid) 46%, var(--sky-bot) 100%);
+    display:flex; align-items:center; justify-content:center;
+    transition: opacity .5s ease, visibility .5s ease;
+  }
+  #welcome.hide{ opacity:0; visibility:hidden; pointer-events:none; }
+  #welcome .wbox{ text-align:center; max-width:380px; padding:20px; animation: floatIn .8s ease both; }
+  #welcome .wheart{ font-size:36px; margin-bottom:8px; filter: drop-shadow(0 4px 10px rgba(242,166,198,0.5)); }
+  #welcome h2{ font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:700; font-size:32px; margin:0 0 10px 0; color:var(--ink); }
+  #welcome p{ font-size:13px; color:var(--ink-soft); line-height:1.6; margin:0 0 24px 0; }
+  #welcome .wbtns{ display:flex; flex-direction:column; gap:10px; align-items:stretch; }
+  #welcome .wbtns button{ font-family:'Quicksand',sans-serif; font-weight:700; font-size:13.5px; padding:14px 20px; border-radius:16px; cursor:pointer; box-shadow:var(--shadow-soft); transition:transform .15s ease; }
+  #welcome .wbtns button:hover{ transform:translateY(-2px); }
+  #welcomeUpload{ background: linear-gradient(135deg, var(--rose), var(--gold)); color:#fff; border:none; }
+
+  /* ---- end-of-journey summary ---- */
+  #summary{
+    position:fixed; left:50%; top:20%; transform:translate(-50%,-8px);
+    z-index:25; opacity:0; pointer-events:none; transition:opacity .6s ease, transform .6s ease;
+  }
+  #summary.show{ opacity:1; pointer-events:auto; transform:translate(-50%,0); }
+  #summary .sbox{
+    background:var(--panel-strong); border:1px solid var(--panel-border); border-radius:22px;
+    padding:22px 30px; text-align:center; box-shadow:var(--shadow-soft); backdrop-filter:blur(12px);
+    min-width:220px;
+  }
+  #summary .sheart{ font-size:24px; margin-bottom:2px; }
+  #summary .stitle{ font-family:'Cormorant Garamond',serif; font-weight:700; font-style:italic; font-size:18px; color:var(--ink); margin-bottom:12px; }
+  #summary .sstats{ display:flex; gap:24px; justify-content:center; margin-bottom:8px; }
+  #summary .sstats div{ display:flex; flex-direction:column; align-items:center; }
+  #summary .sstats b{ font-family:'JetBrains Mono',monospace; font-size:18px; color:var(--blue-primary); }
+  #summary .sstats span{ font-size:9.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; margin-top:2px; }
+  #summary .shomes{ font-size:11px; color:var(--gold); margin-bottom:14px; font-weight:700; display:none; }
+  #summary .shomes b{ font-family:'JetBrains Mono',monospace; }
+  #summary #replaybtn{
+    font-family:'Quicksand',sans-serif; font-weight:700; font-size:12px; color:#fff;
+    background:linear-gradient(135deg, var(--rose), var(--gold)); border:none; border-radius:999px;
+    padding:9px 20px; cursor:pointer; box-shadow:var(--shadow-soft);
+  }
+
+  /* ---- MUSIC MODAL ---- */
+  #musicOverlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.3); backdrop-filter: blur(4px);
+    z-index: 100; display: none; align-items: center; justify-content: center;
+  }
+  #musicOverlay.show { display: flex; }
+  #musicBox {
+    background: var(--panel-strong); border: 1px solid var(--panel-border); border-radius: 20px;
+    padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); max-width: 340px; width: 90%;
+    animation: stopFade 0.3s ease;
+  }
+  #musicBox h3 { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: var(--ink); margin: 0 0 16px 0; }
+  .track-label { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 14px; font-weight: 500; cursor: pointer; }
+  .track-label input { accent-color: var(--rose-deep); }
+  #customUrlInput {
+    width: 100%; padding: 10px 12px; margin-top: 6px; border-radius: 8px;
+    border: 1px solid var(--panel-border); font-family: 'Quicksand', sans-serif;
+    font-size: 12.5px; outline: none; display: none; background: #fff;
+  }
+  .music-btns { display: flex; gap: 10px; margin-top: 20px; }
+  .music-btns button {
+    flex: 1; padding: 10px; border-radius: 99px; border: none; font-family: 'Quicksand', sans-serif;
+    font-weight: 700; font-size: 13px; cursor: pointer; transition: transform 0.15s ease;
+  }
+  .music-btns button:active { transform: scale(0.95); }
+  #btnPlayMusic { background: linear-gradient(135deg, var(--rose), var(--gold)); color: #fff; }
+  #btnStopMusic { background: var(--muted2); color: var(--ink); }
+  #btnCloseMusic { background: transparent; color: var(--ink-soft); border: 1px solid var(--panel-border); }
+
+  /* ---- LIST PANEL ---- */
+  #listPanel {
+    position: fixed; top: 0; bottom: 0; right: -380px; width: 340px;
+    background: rgba(255, 248, 251, 0.85); backdrop-filter: blur(20px);
+    z-index: 110; transition: right 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: -15px 0 40px rgba(0,0,0,0.1); border-left: 1px solid var(--panel-border);
+    display: flex; flex-direction: column;
+  }
+  #listPanel.show { right: 0; }
+  .list-header {
+    padding: 22px 26px; border-bottom: 1px solid var(--panel-border);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .list-header h3 { margin: 0; font-family: 'Cormorant Garamond', serif; font-size: 22px; color: var(--ink); }
+  #closeListBtn { background: none; border: none; font-size: 18px; cursor: pointer; color: var(--ink-soft); transition: transform 0.2s; }
+  #closeListBtn:hover { transform: scale(1.1); color: var(--rose-deep); }
+  #listContent { flex: 1; overflow-y: auto; padding: 16px; scrollbar-width: thin; scrollbar-color: var(--muted2) transparent; }
+  #listContent::-webkit-scrollbar { width: 6px; }
+  #listContent::-webkit-scrollbar-thumb { background: var(--muted2); border-radius: 10px; }
+  
+  .l-item {
+    padding: 14px; border-radius: 14px; margin-bottom: 10px; cursor: pointer;
+    background: rgba(255,255,255,0.4); border: 1px solid transparent;
+    transition: all 0.2s ease;
+  }
+  .l-item:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(33,150,243,0.1); }
+  .l-item.active { background: #fff; border-color: var(--blue-primary); box-shadow: 0 8px 24px rgba(33,150,243,0.2); transform: translateY(-2px); }
+  
+  .l-item-idx { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--gold); letter-spacing: 0.05em; font-weight: 600; }
+  .l-item-name { font-weight: 700; font-size: 15px; margin: 6px 0; color: var(--ink); line-height: 1.3; }
+  .l-item-meta { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); display: flex; justify-content: space-between; align-items: center; flex-wrap:wrap; gap: 6px; }
+  .l-item-dist { color: var(--blue-primary); font-weight: 600; background: rgba(33,150,243,0.1); padding: 3px 6px; border-radius: 6px; }
+
+  .gmap-link {
+    text-decoration: none; color: var(--blue-primary); margin-left: 6px; background: rgba(33,150,243,0.1);
+    padding: 3px 8px; border-radius: 6px; font-weight: bold; transition: all 0.2s; display: inline-block;
+  }
+  .gmap-link:hover { background: rgba(33,150,243,0.25); transform: scale(1.05); }
+
+  #mapAttribution{
+    position:fixed; left:10px; bottom:8px; z-index:15; display:none;
+    font-family:'JetBrains Mono',monospace; font-size:8.5px; color:rgba(107,74,92,0.6);
+    background:rgba(255,248,251,0.6); padding:2px 8px; border-radius:8px; pointer-events:auto;
+  }
+  #mapAttribution a{ color:inherit; }
+
+  input[type=file]{ display:none; }
+
+  @media (max-width: 640px){
+    #legend{ display:none; }
+    #stopcard{ left:14px; width:min(240px,72vw); padding:15px; }
+    #stopcard .name{ font-size:16px; }
+    #header{ padding:16px 16px 0 16px; }
+    #hint{ display:none; }
+    #timeline-wrap{ padding:8px 12px 14px 12px; }
+    #uploadbtn span.label{ display:none; }
+    #uploadbtn{ padding:9px 11px; }
+    .iconbtn{ width:36px; height:36px; }
+    .navbtn{ width:32px; height:32px; }
+    #compass{ width:38px; height:38px; }
+    #statbar{ gap:10px; }
+    #listPanel { width: 100%; right: -100%; border-left: none; }
+  }
+
+  @keyframes floatIn{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:translateY(0); } }
+
+  .iconrow{ display:flex; gap:8px; align-items:center; }
+  .iconbtn{
+    width:40px; height:40px; border-radius:50%; border:1px solid var(--panel-border);
+    background:var(--panel-strong); color:var(--rose-deep); cursor:pointer;
+    display:flex; align-items:center; justify-content:center; position:relative;
+    box-shadow: var(--shadow-soft); transition: transform .15s ease, color .2s ease; flex:0 0 auto;
+  }
+  .iconbtn:hover{ transform:translateY(-1px); }
+  .iconbtn:active{ transform:scale(0.92); }
+  .iconbtn svg{ width:15px; height:15px; }
+  .iconbtn.active{ color:var(--gold); border-color:rgba(221,169,104,0.5); }
+
+  #musicbtn .eq{ display:none; align-items:flex-end; gap:2.5px; height:14px; }
+  #musicbtn.playing .eq{ display:flex; }
+  #musicbtn.playing #musicNote{ display:none; }
+  #musicbtn .eq span{ width:2.5px; background:var(--rose-deep); border-radius:2px; animation: eqbounce 0.9s ease-in-out infinite; }
+  #musicbtn .eq span:nth-child(1){ animation-delay:0s; }
+  #musicbtn .eq span:nth-child(2){ animation-delay:0.2s; }
+  #musicbtn .eq span:nth-child(3){ animation-delay:0.4s; }
+  @keyframes eqbounce{ 0%,100%{ height:4px; } 50%{ height:14px; } }
+
+  .navbtn{
+    width:36px; height:36px; border-radius:50%; border:1px solid var(--panel-border);
+    background:var(--panel-strong); color:var(--rose-deep); cursor:pointer;
+    display:flex; align-items:center; justify-content:center; flex:0 0 auto;
+    box-shadow: var(--shadow-soft); transition: transform .15s ease;
+  }
+  .navbtn:hover{ transform:scale(1.06); }
+  .navbtn:active{ transform:scale(0.9); }
+  .navbtn svg{ width:12px; height:12px; }
+
+  #flash{
+    position:fixed; inset:0; background:#fff; opacity:0; pointer-events:none;
+    z-index:90; transition: opacity .25s ease;
+  }
+</style>
+</head>
+<body>
+<!-- Script YouTube API chèn sẵn -->
+<script src="https://www.youtube.com/iframe_api"></script>
+
+<div id="loading"><div class="spin"></div><div class="l1">đang dựng bản đồ…</div></div>
+
+<div id="welcome">
+  <div class="wbox">
+    <div class="wheart">📍</div>
+    <h2>Trình Xem Bản Đồ KML</h2>
+    <p>Tải lên file <b>.kml / .kmz</b> để xem hành trình 3D trên OpenStreetMap.</p>
+    <div class="wbtns">
+      <button id="welcomeUpload">📤 Tải bản đồ lên</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<div id="stage"></div>
+<div id="vignette"></div>
+<div id="mapAttribution">Bản đồ nền: © OpenStreetMap contributors</div>
+
+<div id="summary">
+  <div class="sbox">
+    <div class="sheart">📍</div>
+    <div class="stitle">Hành trình hoàn tất</div>
+    <div class="sstats">
+      <div><b id="sumCount">0</b><span>địa điểm</span></div>
+      <div><b id="sumKm">0</b><span>km</span></div>
+    </div>
+    <div class="shomes" id="sumHomes">📍 <span id="sumHomeA">—</span> ↔ <span id="sumHomeB">—</span> ≈ <b id="sumHomeKm">—</b> km</div>
+    <button id="replaybtn">↺ Xem lại từ đầu</button>
+  </div>
+</div>
+
+<div id="musicOverlay">
+  <div id="musicBox">
+    <h3>🎵 Chọn nhạc nền</h3>
+    <label class="track-label"><input type="radio" name="mtrack" value="tone" checked> Bản phối tự tạo (Tone.js)</label>
+    <label class="track-label"><input type="radio" name="mtrack" value="chill"> Lofi Chill (Mẫu)</label>
+    <label class="track-label"><input type="radio" name="mtrack" value="piano"> Piano Nhẹ Nhàng (Mẫu)</label>
+    <label class="track-label"><input type="radio" name="mtrack" value="custom"> 🔗 Nhập link YouTube / MP3 tùy ý</label>
+    <input type="text" id="customUrlInput" placeholder="Ví dụ: https://youtu.be/xxx hoặc .mp3">
+    
+    <div class="music-btns">
+      <button id="btnPlayMusic">Phát nhạc</button>
+      <button id="btnStopMusic">Tắt nhạc</button>
+      <button id="btnCloseMusic">Đóng</button>
+    </div>
+  </div>
+</div>
+
+<div id="listPanel">
+  <div class="list-header">
+    <h3>Danh sách địa điểm</h3>
+    <button id="closeListBtn">✕</button>
+  </div>
+  <div id="listContent"></div>
+</div>
+
+<div id="yt-player-container" style="position: absolute; bottom: 0; right: 0; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none; z-index: -99;"></div>
+
+<div id="hud">
+  <div id="header">
+    <div>
+      <p class="eyebrow">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-10-9.3C.3 8 2 4 6 4c2.2 0 3.7 1.2 4.7 2.6C11.7 5.2 13.2 4 15.4 4c4 0 5.7 4 4 7.7C19.5 16.4 12 21 12 21z"/></svg>
+        Hành trình yêu thương
+      </p>
+      <h1 id="title">Hành Trình</h1>
+      <p id="sub">Nối theo đúng thứ tự đã lưu trong file — kéo thanh thời gian để di chuyển.</p>
+      <div id="statbar">
+        <div class="stat-chip"><span class="v" id="statCount">—</span><span class="k">địa điểm</span></div>
+        <div class="stat-chip"><span class="v" id="statTotalKm">—</span><span class="k">km tổng</span></div>
+        <div class="stat-chip"><span class="v" id="statTraveled">—</span><span class="k">km đã đi</span></div>
+        <div class="stat-chip"><span class="v" id="statPercent">—</span><span class="k">hành trình</span></div>
+      </div>
+    </div>
+    <div class="headerRight">
+      <div class="iconrow">
+        <button id="uploadbtn" title="Tải lên bản đồ khác">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span class="label">Đổi bản đồ</span>
+        </button>
+        <button id="listbtn" class="iconbtn" title="Xem danh sách địa điểm" aria-label="Danh sách">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+        </button>
+        <button id="musicbtn" class="iconbtn" title="Nhạc nền (phím M)" aria-label="Bật/tắt nhạc nền">
+          <svg id="musicNote" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          <div class="eq"><span></span><span></span><span></span></div>
+        </button>
+        <button id="shotbtn" class="iconbtn" title="Lưu ảnh khung cảnh" aria-label="Lưu ảnh khung cảnh">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </button>
+        <button id="fsbtn" class="iconbtn" title="Toàn màn hình (phím F)" aria-label="Toàn màn hình">
+          <svg id="fsExpand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+          <svg id="fsCompress" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>
+        </button>
+      </div>
+      <input type="file" id="fileinput" accept=".kml,.kmz">
+      <div id="legend"></div>
+      
+      <div id="compass" title="Hướng Bắc">
+        <svg viewBox="0 0 100 100">
+           <circle cx="50" cy="50" r="46" fill="rgba(255,248,251,0.85)" stroke="#DDA968" stroke-width="2.5" stroke-dasharray="4 4" />
+           <circle cx="50" cy="50" r="38" fill="none" stroke="#DDA968" stroke-width="0.8" opacity="0.6"/>
+           <text x="50" y="24" text-anchor="middle" font-size="14" font-family="'JetBrains Mono', monospace" font-weight="800" fill="#E86A93">N</text>
+           <g id="needleGroup" style="transform-origin: 50px 50px;">
+             <polygon points="50,12 56,50 50,55" fill="#E86A93" />
+             <polygon points="50,12 44,50 50,55" fill="#CDBAC5" />
+             <polygon points="50,88 56,50 50,55" fill="#b0a2a9" />
+             <polygon points="50,88 44,50 50,55" fill="#d9d1d6" />
+           </g>
+           <circle cx="50" cy="50" r="4" fill="#6B4A5C" />
+           <circle cx="50" cy="50" r="1.5" fill="#DDA968" />
+        </svg>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="hint">kéo để xoay · lăn để zoom · bấm điểm để bay đến<br>Space⋅←/→⋅F⋅M — phím tắt tiện dụng</div>
+
+  <div id="stopcard">
+    <div class="idx"><span id="idxtext">01 / 25</span><span class="bar"></span></div>
+    <div class="name" id="stopname">—</div>
+    <div class="coords" id="stopcoords">—</div>
+    <div class="delta" id="stopdelta" style="display:none">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-10-9.3C.3 8 2 4 6 4c2.2 0 3.7 1.2 4.7 2.6C11.7 5.2 13.2 4 15.4 4c4 0 5.7 4 4 7.7C19.5 16.4 12 21 12 21z"/></svg>
+      <span id="deltatext">—</span>
+    </div>
+    <div class="cum" id="cumtext"></div>
+    <button id="featToggleBtn" class="feat-btn" style="margin-top: 14px; width: 100%; justify-content: center;">
+      📍 Đặt làm điểm quan trọng (Max 2)
+    </button>
+  </div>
+
+  <div id="timeline-wrap">
+    <div id="controls">
+      <button id="prevbtn" class="navbtn" title="Điểm trước (←)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button id="playbtn" aria-label="Phát">
+        <svg id="iconplay" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="iconpause" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+      </button>
+      <button id="nextbtn" class="navbtn" title="Điểm kế tiếp (→)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <div id="readout"><span id="ridx">01</span><span>/25 · </span><span id="rname">—</span></div>
+      <input type="range" id="scrub" min="0" max="24" step="0.001" value="0">
+      <button id="speedbtn">1×</button>
+    </div>
+    <div id="ticks"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+<script>
+(function(){
+
+const FEATURED_COLOR = '#E3A857';
+
+function metersPerDeg(latDeg){
+  const lat = latDeg*Math.PI/180;
+  const mLat = 111132.92 - 559.82*Math.cos(2*lat) + 1.175*Math.cos(4*lat) - 0.0023*Math.cos(6*lat);
+  const mLon = 111412.84*Math.cos(lat) - 93.5*Math.cos(3*lat) + 0.118*Math.cos(5*lat);
+  return {mLat, mLon};
+}
+function haversineKm(lat1,lon1,lat2,lon2){
+  const R = 6371.0088;
+  const toRad = d=>d*Math.PI/180;
+  const dLat = toRad(lat2-lat1), dLon = toRad(lon2-lon1);
+  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
+  return 2*R*Math.asin(Math.sqrt(a));
+}
+function lon2tileX(lon,z){ return Math.floor((lon+180)/360*Math.pow(2,z)); }
+function lat2tileY(lat,z){
+  const r = lat*Math.PI/180;
+  return Math.floor((1 - Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2*Math.pow(2,z));
+}
+function tileX2lon(x,z){ return x/Math.pow(2,z)*360-180; }
+function tileY2lat(y,z){
+  const n = Math.PI - 2*Math.PI*y/Math.pow(2,z);
+  return 180/Math.PI*Math.atan(0.5*(Math.exp(n)-Math.exp(-n)));
+}
+
+const PALETTE = ['#2196F3', '#1976D2', '#03A9F4', '#00BCD4'];
+function assignCategories(points){
+  const groups = new Map();
+  points.forEach(p=>{
+    const key = p.colorHex || '__default__';
+    if(!groups.has(key)) groups.set(key, {color: PALETTE[groups.size % PALETTE.length], count:0});
+    groups.get(key).count++;
+    p.cat = key;
+  });
+  return groups;
+}
+
+function parseKml(text){
+  const xml = new DOMParser().parseFromString(text, 'text/xml');
+  if(xml.getElementsByTagName('parsererror').length){ throw new Error('File KML bị lỗi định dạng.'); }
+
+  const styleColor = {};
+  Array.from(xml.getElementsByTagName('Style')).forEach(st=>{
+    const id = st.getAttribute('id'); if(!id) return;
+    const colorEl = st.getElementsByTagName('color')[0];
+    if(colorEl && colorEl.textContent && colorEl.textContent.trim().length>=8){
+      const kc = colorEl.textContent.trim();
+      const bb = kc.substr(2,2), gg = kc.substr(4,2), rr = kc.substr(6,2);
+      styleColor[id] = ('#'+rr+gg+bb).toUpperCase();
+    } else {
+      const m = id.match(/[0-9A-Fa-f]{6}/);
+      if(m) styleColor[id] = ('#'+m[0]).toUpperCase();
+    }
+  });
+  const styleMapNormal = {};
+  Array.from(xml.getElementsByTagName('StyleMap')).forEach(sm=>{
+    const id = sm.getAttribute('id'); if(!id) return;
+    const pairs = Array.from(sm.getElementsByTagName('Pair'));
+    const normalPair = pairs.find(p=>{
+      const k = p.getElementsByTagName('key')[0];
+      return k && k.textContent.trim()==='normal';
+    });
+    if(normalPair){
+      const su = normalPair.getElementsByTagName('styleUrl')[0];
+      if(su) styleMapNormal[id] = su.textContent.trim().replace('#','');
+    }
+  });
+  function resolveColor(styleUrlRaw){
+    if(!styleUrlRaw) return null;
+    let id = styleUrlRaw.replace('#','').trim();
+    if(styleMapNormal[id]) id = styleMapNormal[id];
+    return styleColor[id] || null;
+  }
+
+  const placemarks = Array.from(xml.getElementsByTagName('Placemark'));
+  const out = [];
+  placemarks.forEach((pm,i)=>{
+    const pointEl = pm.getElementsByTagName('Point')[0];
+    if(!pointEl) return;
+    const coordEl = pointEl.getElementsByTagName('coordinates')[0];
+    if(!coordEl || !coordEl.textContent) return;
+    const parts = coordEl.textContent.trim().split(',');
+    const lon = parseFloat(parts[0]), lat = parseFloat(parts[1]);
+    if(!isFinite(lon) || !isFinite(lat)) return;
+    const nameEl = pm.getElementsByTagName('name')[0];
+    const name = (nameEl && nameEl.textContent.trim()) || ('Điểm '+(i+1));
+    const suEl = pm.getElementsByTagName('styleUrl')[0];
+    out.push({name, lon, lat, colorHex: resolveColor(suEl ? suEl.textContent : null)});
+  });
+  return out;
+}
+
+async function parseMapFile(file){
+  const lower = file.name.toLowerCase();
+  let kmlText;
+  if(lower.endsWith('.kmz')){
+    if(typeof JSZip === 'undefined') throw new Error('Không tải được thư viện JSZip.');
+    const buf = await file.arrayBuffer();
+    const zip = await JSZip.loadAsync(buf);
+    let entry = null;
+    zip.forEach((path, e)=>{ if(!entry && path.toLowerCase().endsWith('.kml')) entry = e; });
+    if(!entry) throw new Error('Không tìm thấy file .kml bên trong.');
+    kmlText = await entry.async('text');
+  } else if(lower.endsWith('.kml')){
+    kmlText = await file.text();
+  } else {
+    throw new Error('Chỉ hỗ trợ file .kml hoặc .kmz.');
+  }
+  const pts = parseKml(kmlText);
+  if(!pts.length) throw new Error('Không tìm thấy điểm (Point) nào trong file.');
+  return pts;
+}
+
+// ============================================================
+// THREE.JS SETUP
+// ============================================================
+const stage = document.getElementById('stage');
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0xEFE1F0, 400, 2500);
+
+const camera = new THREE.PerspectiveCamera(52, window.innerWidth/window.innerHeight, 1, 4000);
+const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true, preserveDrawingBuffer:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setClearColor(0x000000, 0);
+if(renderer.outputEncoding!==undefined) renderer.outputEncoding = THREE.sRGBEncoding;
+stage.appendChild(renderer.domElement);
+
+scene.add(new THREE.AmbientLight(0xfbe6ee, 1.25));
+const key = new THREE.DirectionalLight(0xffe9cf, 0.4);
+key.position.set(180,420,160);
+scene.add(key);
+const fillLight = new THREE.DirectionalLight(0xd9c6ea, 0.25);
+fillLight.position.set(-200,120,-160);
+scene.add(fillLight);
+
+const groundSize = 900;
+const grid = new THREE.GridHelper(groundSize, 60, 0xE8B7CE, 0xF0DCE8);
+grid.position.y = -0.5;
+grid.material.opacity = 0.15;
+grid.material.transparent = true;
+scene.add(grid);
+
+const groundMat = new THREE.MeshBasicMaterial({color:0xF6E9F1, transparent:true, opacity:0.32});
+const groundMesh = new THREE.Mesh(new THREE.PlaneGeometry(groundSize, groundSize), groundMat);
+groundMesh.rotation.x = -Math.PI/2;
+groundMesh.position.y = -0.6;
+scene.add(groundMesh);
+
+function makeRadialTex(colorStops){
+  const c = document.createElement('canvas'); c.width=c.height=512;
+  const ctx = c.getContext('2d');
+  const g = ctx.createRadialGradient(256,256,0,256,256,256);
+  colorStops.forEach(s=> g.addColorStop(s[0], s[1]));
+  ctx.fillStyle=g; ctx.fillRect(0,0,512,512);
+  return new THREE.CanvasTexture(c);
+}
+const groundGlow = new THREE.Mesh(
+  new THREE.PlaneGeometry(640,640),
+  new THREE.MeshBasicMaterial({map:makeRadialTex([[0,'rgba(242,166,198,0.20)'],[0.5,'rgba(221,169,104,0.07)'],[1,'rgba(242,166,198,0)']]), transparent:true, depthWrite:false})
+);
+groundGlow.rotation.x = -Math.PI/2;
+groundGlow.position.y = -0.55; 
+scene.add(groundGlow);
+
+const basemapGroup = new THREE.Group(); scene.add(basemapGroup);
+let basemapGen = 0;
+const attributionEl = document.getElementById('mapAttribution');
+
+async function loadBasemap(minLon,maxLon,minLat,maxLat, lon0,lat0,mLat,mLon,SCALE, myGen){
+  try{
+    const padLon = Math.max((maxLon-minLon)*0.18, 0.004);
+    const padLat = Math.max((maxLat-minLat)*0.18, 0.004);
+    const west=minLon-padLon, east=maxLon+padLon, south=minLat-padLat, north=maxLat+padLat;
+
+    let z = 17, x0=0,x1=0,y0=0,y1=0;
+    for(; z>=3; z--){
+      x0 = lon2tileX(west, z); x1 = lon2tileX(east, z);
+      y0 = lat2tileY(north, z); y1 = lat2tileY(south, z);
+      if((x1-x0+1)<=7 && (y1-y0+1)<=7) break;
+    }
+    const cols = Math.max(1,x1-x0+1), rows = Math.max(1,y1-y0+1);
+    const canvas = document.createElement('canvas');
+    canvas.width = cols*256; canvas.height = rows*256;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    const loads = [];
+    for(let ty=y0; ty<=y1; ty++){
+      for(let tx=x0; tx<=x1; tx++){
+        const url = `https://tile.openstreetmap.org/${z}/${tx}/${ty}.png`;
+        const cx = (tx-x0)*256, cy=(ty-y0)*256;
+        loads.push(new Promise(resolve=>{
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = ()=>{ try{ ctx.drawImage(img, cx, cy, 256, 256); }catch(e){} resolve(); };
+          img.onerror = ()=> resolve();
+          img.src = url;
+        }));
+      }
+    }
+    await Promise.all(loads);
+    if(myGen !== basemapGen) return;
+
+    const west2 = tileX2lon(x0,z), east2 = tileX2lon(x1+1,z);
+    const north2 = tileY2lat(y0,z), south2 = tileY2lat(y1+1,z);
+    const xMin = (west2-lon0)*mLon*SCALE, xMax = (east2-lon0)*mLon*SCALE;
+    const zMin = -(north2-lat0)*mLat*SCALE, zMax = -(south2-lat0)*mLat*SCALE;
+
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.minFilter = THREE.LinearFilter;
+
+    while(basemapGroup.children.length){
+      const m = basemapGroup.children.pop();
+      m.geometry.dispose(); m.material.dispose();
+    }
+    
+    const mat = new THREE.MeshBasicMaterial({map:tex, transparent:true, opacity:0});
+    const plane = new THREE.Mesh(new THREE.PlaneGeometry(xMax-xMin, zMax-zMin), mat);
+    plane.rotation.x = -Math.PI/2;
+    plane.position.set((xMin+xMax)/2, -0.1, (zMin+zMax)/2);
+    basemapGroup.add(plane);
+
+    const fadeStart = performance.now();
+    function fadeStep(now){
+      if(myGen !== basemapGen) return;
+      const tt = Math.min(1, (now-fadeStart)/900);
+      mat.opacity = tt * 1.0; 
+      if (tt > 0.5) { groundMesh.visible = false; groundGlow.visible = false; }
+      if(tt<1) requestAnimationFrame(fadeStep);
+    }
+    requestAnimationFrame(fadeStep);
+    attributionEl.style.display = 'block';
+  }catch(err){
+    console.error("OSM Basemap error:", err);
+  }
+}
+
+function makeHeartTexture(hex){
+  const size = 128;
+  const c = document.createElement('canvas'); c.width=c.height=size;
+  const ctx = c.getContext('2d');
+  ctx.save();
+  ctx.translate(size*0.05, size*0.02);
+  const s = size*0.9;
+  const top = s*0.32;
+  ctx.beginPath();
+  ctx.moveTo(s/2, top);
+  ctx.bezierCurveTo(s/2, top - s*0.32, s*0.06, top - s*0.28, s*0.06, top + s*0.02);
+  ctx.bezierCurveTo(s*0.06, top + s*0.30, s/2, s*0.86, s/2, s*0.98);
+  ctx.bezierCurveTo(s/2, s*0.86, s*0.94, top + s*0.30, s*0.94, top + s*0.02);
+  ctx.bezierCurveTo(s*0.94, top - s*0.28, s/2, top - s*0.32, s/2, top);
+  ctx.closePath();
+  ctx.shadowColor = hex; ctx.shadowBlur = 18;
+  ctx.fillStyle = hex; ctx.fill();
+  ctx.shadowBlur = 0;
+  const hi = ctx.createRadialGradient(s*0.35,top+s*0.05,1,s*0.35,top+s*0.05,s*0.22);
+  hi.addColorStop(0,'rgba(255,255,255,0.85)');
+  hi.addColorStop(1,'rgba(255,255,255,0)');
+  ctx.fillStyle = hi;
+  ctx.beginPath(); ctx.ellipse(s*0.36, top+s*0.08, s*0.16, s*0.11, -0.5, 0, Math.PI*2); ctx.fill();
+  ctx.restore();
+  return new THREE.CanvasTexture(c);
+}
+
+function makeHouseTexture(hex){
+  const size = 128;
+  const c = document.createElement('canvas'); c.width=c.height=size;
+  const ctx = c.getContext('2d');
+  const cx = size/2;
+  ctx.beginPath();
+  ctx.moveTo(cx, size*0.16);
+  ctx.lineTo(size*0.12, size*0.5);
+  ctx.lineTo(size*0.88, size*0.5);
+  ctx.closePath();
+  ctx.shadowColor = hex; ctx.shadowBlur = 16;
+  ctx.fillStyle = hex; ctx.fill();
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = hex;
+  ctx.fillRect(size*0.22, size*0.5, size*0.56, size*0.36);
+  ctx.fillStyle = 'rgba(255,255,255,0.88)';
+  ctx.fillRect(size*0.44, size*0.62, size*0.12, size*0.24);
+  ctx.save();
+  ctx.translate(cx-7, size*0.01);
+  const s=14, top=s*0.32;
+  ctx.beginPath();
+  ctx.moveTo(s/2, top);
+  ctx.bezierCurveTo(s/2, top-s*0.32, s*0.06, top-s*0.28, s*0.06, top+s*0.02);
+  ctx.bezierCurveTo(s*0.06, top+s*0.30, s/2, s*0.86, s/2, s*0.98);
+  ctx.bezierCurveTo(s/2, s*0.86, s*0.94, top+s*0.30, s*0.94, top+s*0.02);
+  ctx.bezierCurveTo(s*0.94, top-s*0.28, s/2, top-s*0.32, s/2, top);
+  ctx.closePath();
+  ctx.fillStyle = '#ffffff';
+  ctx.globalAlpha = 0.92;
+  ctx.fill();
+  ctx.restore();
+  return new THREE.CanvasTexture(c);
+}
+
+// ============================================================
+// DATASET STATE
+// ============================================================
+let rawPts = [], curve = null, densePts = [], N = 0, DENSE = 600, catGroups = null;
+let segDist = [], cumDist = [], totalKm = 0;
+let sceneBBox = {xMin:-100,xMax:100,zMin:-100,zMax:100};
+let overviewRadius = 120;
+let selectedFeatured = []; 
+
+const trailGroup = new THREE.Group(); scene.add(trailGroup);
+let coreMesh=null, haloMesh=null, tipHeart=null, fullMesh=null;
+
+const coreMat = new THREE.MeshBasicMaterial({color:0xFF6D00});
+const haloMat = new THREE.MeshBasicMaterial({color:0xFF9800, transparent:true, opacity:0.4, blending:THREE.AdditiveBlending, depthWrite:false});
+const fullMat = new THREE.MeshBasicMaterial({color:0xFFCC80, transparent:true, opacity:0.3});
+
+const tipHeartTex = makeHeartTexture('#FF1111'); 
+const tipHeartMat = new THREE.SpriteMaterial({
+    map: tipHeartTex, transparent: true, opacity: 1.0, 
+    depthWrite: false, depthTest: false 
+});
+tipHeart = new THREE.Sprite(tipHeartMat);
+tipHeart.scale.set(15,15,1);
+tipHeart.renderOrder = 999;
+trailGroup.add(tipHeart);
+
+const markerGroup = new THREE.Group(); scene.add(markerGroup);
+let markers = [];
+const markerHeartCache = {};
+function heartTexFor(hex){
+  if(!markerHeartCache[hex]) markerHeartCache[hex] = makeHeartTexture(hex);
+  return markerHeartCache[hex];
+}
+const markerHouseCache = {};
+function houseTexFor(hex){
+  if(!markerHouseCache[hex]) markerHouseCache[hex] = makeHouseTexture(hex);
+  return markerHouseCache[hex];
+}
+
+const burstGroup = new THREE.Group(); scene.add(burstGroup);
+const burstParticles = [];
+function easeOutBack(t){ const c1=1.70158, c3=c1+1; return 1 + c3*Math.pow(t-1,3) + c1*Math.pow(t-1,2); }
+function triggerBurst(markerObj){
+  if(!markerObj) return;
+  const hex = markerObj.userData.colorHex || '#2196F3';
+  const origin = new THREE.Vector3(markerObj.position.x, markerObj.userData.headY, markerObj.position.z);
+  for(let i=0;i<6;i++){
+    const mat = new THREE.SpriteMaterial({map:heartTexFor(hex), transparent:true, opacity:0.95, depthWrite:false}); 
+    const s = new THREE.Sprite(mat);
+    const sc = 2.6+Math.random()*2.2;
+    s.scale.set(sc,sc,1);
+    s.position.copy(origin);
+    const ang = Math.random()*Math.PI*2;
+    const speed = 5+Math.random()*7;
+    s.userData = {
+      vel: new THREE.Vector3(Math.cos(ang)*speed, 7+Math.random()*7, Math.sin(ang)*speed),
+      life: 0, maxLife: 0.8+Math.random()*0.5
+    };
+    burstGroup.add(s);
+    burstParticles.push(s);
+  }
+}
+
+function makeTube(pts, radius, segs){
+  if(pts.length<2) return null;
+  const c = new THREE.CatmullRomCurve3(pts, false, 'catmullrom', 0.35);
+  return new THREE.TubeGeometry(c, Math.max(2,segs), radius, 8, false);
+}
+function clearGroup(g){
+  while(g.children.length){
+    const m = g.children.pop();
+    if(m.geometry) m.geometry.dispose();
+  }
+}
+
+const labelPool = [];
+function clearLabels(){
+  labelPool.forEach(el=>{ if(el && el.parentNode) el.parentNode.removeChild(el); });
+  labelPool.length = 0;
+}
+function getLabel(i){
+  if(labelPool[i]) return labelPool[i];
+  const el = document.createElement('div');
+  el.className = 'marker-label';
+  el.style.display = 'none';
+  document.body.appendChild(el);
+  labelPool[i] = el;
+  return el;
+}
+
+// ============================================================
+// CAMERA STATE
+// ============================================================
+let progress = 0;
+let userAz = 0, userPhi = 0, zoomFactor = 1, idleT = 0, dragging=false;
+let lastRenderedNearest = -1;
+let overviewMode = false, overviewAz = 0;
+const BASE_RADIUS = 42, BASE_PHI = 0.5, OVERVIEW_PHI = 0.72;
+let lastAzForCompass = 0;
+
+const smoothCamPos = new THREE.Vector3();
+const smoothLookAt = new THREE.Vector3();
+const desiredCamPos = new THREE.Vector3();
+const desiredLookAt = new THREE.Vector3();
+let camInitialized = false;
+
+function stopPos(idxFloat){ const t=Math.max(0,Math.min(1,idxFloat/(N-1||1))); return curve.getPointAt(t); }
+function stopTangent(idxFloat){ const t=Math.max(0,Math.min(1,idxFloat/(N-1||1))); return curve.getTangentAt(t).normalize(); }
+
+function computeDesiredCamera(){
+  if(overviewMode){
+    const cx=(sceneBBox.xMin+sceneBBox.xMax)/2, cz=(sceneBBox.zMin+sceneBBox.zMax)/2;
+    const az = overviewAz + userAz;
+    lastAzForCompass = az;
+    const phi = Math.max(0.35, Math.min(1.2, OVERVIEW_PHI + userPhi));
+    const R = overviewRadius / Math.max(0.6, zoomFactor);
+    desiredCamPos.set(cx + R*Math.cos(phi)*Math.sin(az), R*Math.sin(phi)+14, cz + R*Math.cos(phi)*Math.cos(az));
+    desiredLookAt.set(cx, 6, cz);
+  } else {
+    const p = stopPos(progress);
+    const tan = stopTangent(progress);
+    const baseAz = Math.atan2(-tan.x, -tan.z);
+    const az = baseAz + userAz + idleT;
+    lastAzForCompass = az;
+    const phi = Math.max(0.15, Math.min(1.3, BASE_PHI + userPhi));
+    const R = BASE_RADIUS / zoomFactor;
+    desiredCamPos.set(p.x + R*Math.cos(phi)*Math.sin(az), p.y + R*Math.sin(phi)+6, p.z + R*Math.cos(phi)*Math.cos(az));
+    desiredLookAt.set(p.x, p.y+4, p.z);
+  }
+}
+function updateCamera(dt){
+  computeDesiredCamera();
+  if(!camInitialized){ smoothCamPos.copy(desiredCamPos); smoothLookAt.copy(desiredLookAt); camInitialized=true; }
+  const f = 1-Math.exp(-dt*6);
+  smoothCamPos.lerp(desiredCamPos, f);
+  smoothLookAt.lerp(desiredLookAt, f);
+  camera.position.copy(smoothCamPos);
+  camera.lookAt(smoothLookAt);
+}
+
+function updateTrail(t){
+  if(!coreMesh || !haloMesh) return;
+  const pct = Math.max(0, Math.min(1, t));
+  const ptIdx = Math.floor(pct * (DENSE - 1));
+  const tip = densePts[ptIdx] || densePts[0];
+  
+  tipHeart.position.set(tip.x, tip.y + 4.5, tip.z);
+
+  const maxIndices = coreMesh.geometry.index.count;
+  const count = Math.floor(pct * maxIndices);
+  const safeCount = count - (count % 3);
+  coreMesh.geometry.setDrawRange(0, safeCount);
+  haloMesh.geometry.setDrawRange(0, safeCount);
+}
+
+const legendEl = document.getElementById('legend');
+const ticksEl = document.getElementById('ticks');
+const scrub = document.getElementById('scrub');
+const idxtext = document.getElementById('idxtext');
+const stopname = document.getElementById('stopname');
+const stopcoords = document.getElementById('stopcoords');
+const stopdelta = document.getElementById('stopdelta');
+const deltatext = document.getElementById('deltatext');
+const cumtext = document.getElementById('cumtext');
+const ridx = document.getElementById('ridx');
+const rname = document.getElementById('rname');
+const titleEl = document.getElementById('title');
+const subEl = document.getElementById('sub');
+const stopcardEl = document.getElementById('stopcard');
+const statCountEl = document.getElementById('statCount');
+const statTotalKmEl = document.getElementById('statTotalKm');
+const statTraveledEl = document.getElementById('statTraveled');
+const statPercentEl = document.getElementById('statPercent');
+const summaryEl = document.getElementById('summary');
+const sumCountEl = document.getElementById('sumCount');
+const sumKmEl = document.getElementById('sumKm');
+const sumHomesEl = document.getElementById('sumHomes');
+const sumHomeAEl = document.getElementById('sumHomeA');
+const sumHomeBEl = document.getElementById('sumHomeB');
+const sumHomeKmEl = document.getElementById('sumHomeKm');
+const featToggleBtn = document.getElementById('featToggleBtn');
+
+function fmtCoord(p){ return p.lat.toFixed(5)+'°N, '+p.lon.toFixed(5)+'°E'; }
+
+function enterOverview(){ overviewMode = true; summaryEl.classList.add('show'); }
+function exitOverview(){ if(overviewMode){ overviewMode=false; summaryEl.classList.remove('show'); } }
+
+function updateFeaturedUI() {
+  legendEl.innerHTML = '';
+  
+  markers.forEach((m, i) => {
+    const isFeat = selectedFeatured.includes(i);
+    const p = rawPts[i];
+    p.featured = isFeat;
+
+    const baseColor = catGroups.get(p.cat) ? catGroups.get(p.cat).color : '#2196F3';
+    const hex = isFeat ? FEATURED_COLOR : baseColor;
+    m.userData.colorHex = hex;
+    
+    const icon = m.children[2];
+    icon.material.map = isFeat ? houseTexFor(hex) : heartTexFor(hex);
+    icon.scale.setScalar(isFeat ? 8.5 : 6.5);
+    m.userData.targetScale = isFeat ? 1.22 : 1;
+    
+    const tick = ticksEl.children[i];
+    if(tick) {
+      tick.classList.toggle('featured', isFeat);
+      tick.style.background = hex;
+      tick.style.color = hex;
+    }
+  });
+
+  const mainRow = document.createElement('div');
+  mainRow.className = 'legend-row';
+  mainRow.innerHTML = `<span class="dot" style="background:#2196F3;color:#2196F3"></span>Tổng số điểm đã lưu<b>${N}</b>`;
+  legendEl.appendChild(mainRow);
+  
+  selectedFeatured.forEach(idx => {
+    const p = rawPts[idx];
+    const row = document.createElement('div');
+    row.className = 'legend-row featured';
+    row.innerHTML = `<span class="dot" style="background:${FEATURED_COLOR};color:${FEATURED_COLOR}"></span>${p.name}`;
+    row.addEventListener('click', ()=>{ pause(); animateProgressTo(idx); });
+    legendEl.appendChild(row);
+  });
+
+  if(selectedFeatured.length === 2) {
+    const p1 = rawPts[selectedFeatured[0]];
+    const p2 = rawPts[selectedFeatured[1]];
+    const dist = haversineKm(p1.lat, p1.lon, p2.lat, p2.lon);
+    
+    const distRow = document.createElement('div');
+    distRow.className = 'legend-home-dist';
+    distRow.textContent = 'Khoảng cách ≈ ' + dist.toFixed(2) + ' km';
+    legendEl.appendChild(distRow);
+
+    sumHomeAEl.textContent = p1.name;
+    sumHomeBEl.textContent = p2.name;
+    sumHomeKmEl.textContent = dist.toFixed(2);
+    sumHomesEl.style.display = 'block';
+  } else {
+    sumHomesEl.style.display = 'none';
+  }
+}
+
+featToggleBtn.addEventListener('click', () => {
+  const activeIdx = Math.round(progress);
+  const pos = selectedFeatured.indexOf(activeIdx);
+  if(pos >= 0) {
+    selectedFeatured.splice(pos, 1);
+  } else {
+    if(selectedFeatured.length >= 2) selectedFeatured.shift(); 
+    selectedFeatured.push(activeIdx);
+  }
+  updateFeaturedUI();
+  setProgress(progress); 
+});
+
+function updateListPanelState(activeIdx) {
+  const items = document.querySelectorAll('.l-item');
+  items.forEach((el, i) => {
+    if(i === activeIdx) {
+      el.classList.add('active');
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else {
+      el.classList.remove('active');
+    }
+  });
+}
+
+function setProgress(v){
+  if(!N) return;
+  exitOverview();
+  progress = Math.max(0, Math.min(N-1, v));
+  scrub.value = progress;
+  const pct = (progress/(N-1||1))*100;
+  scrub.style.setProperty('--pct', pct+'%');
+  updateTrail(progress/((N-1)||1));
+
+  const nearest = Math.round(progress);
+  const p = rawPts[nearest];
+  idxtext.textContent = String(nearest+1).padStart(2,'0') + ' / ' + N;
+  stopname.textContent = p.name;
+  stopcoords.textContent = fmtCoord(p);
+  ridx.textContent = String(nearest+1).padStart(2,'0');
+  rname.textContent = p.name;
+
+  if(nearest>0){
+    stopdelta.style.display = 'flex';
+    deltatext.textContent = segDist[nearest].toFixed(2) + ' km từ điểm trước';
+    cumtext.textContent = 'Đã đi ' + cumDist[nearest].toFixed(1) + ' / ' + totalKm.toFixed(1) + ' km';
+  } else {
+    stopdelta.style.display = 'none';
+    cumtext.textContent = 'Điểm khởi hành';
+  }
+  
+  const isFeat = selectedFeatured.includes(nearest);
+  featToggleBtn.textContent = isFeat ? "❌ Hủy điểm quan trọng" : "📍 Đặt làm điểm quan trọng (Max 2)";
+  featToggleBtn.classList.toggle('active', isFeat);
+
+  statTraveledEl.textContent = cumDist[nearest].toFixed(1);
+  statPercentEl.textContent = Math.round((cumDist[nearest]/(totalKm||1))*100) + '%';
+
+  Array.from(ticksEl.children).forEach((el,i)=> el.classList.toggle('active', i===nearest));
+  const activeTick = ticksEl.children[nearest];
+  if(activeTick) activeTick.scrollIntoView({inline:'center', behavior:'smooth', block:'nearest'});
+
+  updateListPanelState(nearest);
+
+  markers.forEach((m,i)=>{
+    const base = m.userData.targetScale || 1;
+    m.userData.currentScaleTarget = (i===nearest ? 1.35 : 1) * base;
+  });
+
+  if(nearest !== lastRenderedNearest){
+    lastRenderedNearest = nearest;
+    stopcardEl.classList.remove('anim'); void stopcardEl.offsetWidth; stopcardEl.classList.add('anim');
+    if(markers[nearest]) triggerBurst(markers[nearest]);
+  }
+}
+
+function buildJourney(points, sourceLabel){
+  clearGroup(markerGroup);
+  clearLabels();
+  ticksEl.innerHTML = '';
+  legendEl.innerHTML = '';
+  summaryEl.classList.remove('show');
+  overviewMode = false;
+  if(fullMesh){ scene.remove(fullMesh); fullMesh.geometry.dispose(); fullMesh=null; }
+  if(coreMesh){ trailGroup.remove(coreMesh); coreMesh.geometry.dispose(); coreMesh=null; }
+  if(haloMesh){ trailGroup.remove(haloMesh); haloMesh.geometry.dispose(); haloMesh=null; }
+
+  N = points.length;
+  catGroups = assignCategories(points);
+  selectedFeatured = []; 
+
+  let lat0=0, lon0=0, minLon=Infinity,maxLon=-Infinity,minLat=Infinity,maxLat=-Infinity;
+  points.forEach(p=>{
+    lon0+=p.lon; lat0+=p.lat;
+    minLon=Math.min(minLon,p.lon); maxLon=Math.max(maxLon,p.lon);
+    minLat=Math.min(minLat,p.lat); maxLat=Math.max(maxLat,p.lat);
+  });
+  lon0/=N; lat0/=N;
+  const {mLat, mLon} = metersPerDeg(lat0);
+
+  rawPts = points.map(p=>{
+    const x = (p.lon-lon0)*mLon;
+    const z = -(p.lat-lat0)*mLat;
+    return {name:p.name, cat:p.cat, lon:p.lon, lat:p.lat, x, z, y:0, featured: false};
+  });
+  
+  let maxExt = 1;
+  rawPts.forEach(p=>{ maxExt = Math.max(maxExt, Math.abs(p.x), Math.abs(p.z)); });
+  const SCALE = 260/maxExt;
+  rawPts.forEach(p=>{ p.x*=SCALE; p.z*=SCALE; });
+
+  let bxMin=Infinity,bxMax=-Infinity,bzMin=Infinity,bzMax=-Infinity;
+  rawPts.forEach(p=>{ bxMin=Math.min(bxMin,p.x); bxMax=Math.max(bxMax,p.x); bzMin=Math.min(bzMin,p.z); bzMax=Math.max(bzMax,p.z); });
+  sceneBBox = {xMin:bxMin,xMax:bxMax,zMin:bzMin,zMax:bzMax};
+  overviewRadius = Math.max(80, Math.hypot(bxMax-bxMin, bzMax-bzMin)*0.62);
+
+  segDist = [0]; totalKm = 0;
+  for(let i=1;i<N;i++){
+    const d = haversineKm(points[i-1].lat, points[i-1].lon, points[i].lat, points[i].lon);
+    segDist.push(d); totalKm += d;
+  }
+  cumDist = [0];
+  for(let i=1;i<N;i++) cumDist.push(cumDist[i-1]+segDist[i]);
+
+  const curvePts = rawPts.map(p=> new THREE.Vector3(p.x, 1.5, p.z));
+  curve = new THREE.CatmullRomCurve3(curvePts, false, 'catmullrom', 0.35);
+  DENSE = Math.min(1400, Math.max(300, N*40));
+  densePts = curve.getSpacedPoints(DENSE);
+
+  fullMesh = new THREE.Mesh(makeTube(densePts, 0.32, DENSE), fullMat);
+  scene.add(fullMesh);
+
+  const cGeo = makeTube(densePts, 0.85, DENSE);
+  const hGeo = makeTube(densePts, 2.4, DENSE);
+  coreMesh = new THREE.Mesh(cGeo, coreMat);
+  haloMesh = new THREE.Mesh(hGeo, haloMat);
+  coreMesh.geometry.setDrawRange(0, 0);
+  haloMesh.geometry.setDrawRange(0, 0);
+  trailGroup.add(coreMesh);
+  trailGroup.add(haloMesh);
+
+  markers = [];
+  const listContent = document.getElementById('listContent');
+  listContent.innerHTML = ''; 
+
+  rawPts.forEach((p,i)=>{
+    const hex = catGroups.get(p.cat) ? catGroups.get(p.cat).color : '#2196F3';
+    const g = new THREE.Group();
+    g.position.set(p.x, 0, p.z);
+
+    const beamH = 5.5 + (i%5)*0.9;
+    const beam = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.55,0.15,beamH,10),
+      new THREE.MeshBasicMaterial({color:new THREE.Color(hex), transparent:true, opacity:0.16, depthWrite:false})
+    );
+    beam.position.y = beamH/2;
+    g.add(beam);
+
+    const orb = new THREE.Mesh(new THREE.SphereGeometry(1.3,16,16), new THREE.MeshBasicMaterial({color:new THREE.Color(hex), transparent:true, opacity:0.9}));
+    orb.position.y = beamH*0.35;
+    g.add(orb);
+
+    const icon = new THREE.Sprite(new THREE.SpriteMaterial({map:heartTexFor(hex), transparent:true, depthWrite:false}));
+    icon.scale.set(6.5,6.5,1);
+    icon.position.y = beamH;
+    g.add(icon);
+
+    const ring = new THREE.Mesh(new THREE.RingGeometry(2.2,2.9,28), new THREE.MeshBasicMaterial({color:new THREE.Color(hex), transparent:true, opacity:0.45, side:THREE.DoubleSide}));
+    ring.rotation.x = -Math.PI/2;
+    ring.position.y = 0.05;
+    g.add(ring);
+
+    g.userData = {index:i, name:p.name, headY:beamH, colorHex:hex, targetScale:1, currentScale:0.001, spawnAt: performance.now()+i*14};
+    g.scale.set(0.001,0.001,0.001);
+    markerGroup.add(g);
+    markers.push(g);
+    
+    const t = document.createElement('div');
+    t.className = 'tick';
+    t.style.background = hex;
+    t.style.color = hex;
+    t.title = p.name;
+    t.addEventListener('click', ()=>{ pause(); animateProgressTo(i); });
+    ticksEl.appendChild(t);
+
+    const lItem = document.createElement('div');
+    lItem.className = 'l-item';
+    lItem.innerHTML = `
+      <div class="l-item-idx">#${String(i+1).padStart(2,'0')}</div>
+      <div class="l-item-name">${p.name}</div>
+      <div class="l-item-meta">
+        <span>
+          ${fmtCoord(p)} 
+          <a href="https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lon}" target="_blank" class="gmap-link" title="Mở trên Google Maps" onclick="event.stopPropagation()">🗺️ Xem Map</a>
+        </span>
+        ${i > 0 ? `<span class="l-item-dist">+ ${segDist[i].toFixed(2)} km</span>` : `<span class="l-item-dist" style="background:transparent;color:var(--muted)">Bắt đầu</span>`}
+      </div>
+    `;
+    lItem.addEventListener('click', () => { 
+      pause(); 
+      animateProgressTo(i); 
+      if(window.innerWidth <= 640) toggleListPanel(); 
+    });
+    listContent.appendChild(lItem);
+  });
+
+  updateFeaturedUI();
+  scrub.min = 0; scrub.max = Math.max(0.001, N-1); scrub.step = 0.001;
+  titleEl.textContent = sourceLabel || 'Hành Trình Yêu Thương';
+  subEl.textContent = N + ' địa điểm, nối theo đúng thứ tự trong file — kéo thanh thời gian để bay qua từng điểm.';
+  statCountEl.textContent = N;
+  statTotalKmEl.textContent = totalKm.toFixed(1);
+  statTraveledEl.textContent = '0.0';
+  statPercentEl.textContent = '0%';
+  sumCountEl.textContent = N;
+  sumKmEl.textContent = totalKm.toFixed(1);
+
+  basemapGen++;
+  const myGen = basemapGen;
+  while(basemapGroup.children.length){ const m=basemapGroup.children.pop(); m.geometry.dispose(); m.material.dispose(); }
+  attributionEl.style.display = 'none';
+  
+  groundMesh.visible = true;
+  groundGlow.visible = true;
+
+  loadBasemap(minLon,maxLon,minLat,maxLat, lon0,lat0,mLat,mLon,SCALE, myGen);
+
+  lastRenderedNearest = -1;
+  progress = 0;
+  camInitialized = false;
+  setProgress(0);
+}
+
+const welcomeEl = document.getElementById('welcome');
+document.getElementById('welcomeUpload').addEventListener('click', ()=>{
+  welcomeEl.classList.add('hide');
+  document.getElementById('fileinput').click();
+});
+
+const fileinput = document.getElementById('fileinput');
+const uploadbtn = document.getElementById('uploadbtn');
+const loadingEl = document.getElementById('loading');
+const toastEl = document.getElementById('toast');
+
+function showLoading(msg){
+  loadingEl.querySelector('.l1').textContent = msg || 'đang dựng bản đồ…';
+  loadingEl.style.display = 'flex';
+  loadingEl.style.opacity = 1;
+}
+function hideLoading(){
+  loadingEl.style.opacity = 0;
+  setTimeout(()=>{ loadingEl.style.display='none'; }, 500);
+}
+function showToast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(()=> toastEl.classList.remove('show'), 3800);
+}
+
+async function handleFile(file){
+  showLoading('đang đọc '+file.name+'…');
+  try{
+    const points = await parseMapFile(file);
+    buildJourney(points, file.name.replace(/\.(kml|kmz)$/i,''));
+    showToast('Đã tải ' + points.length + ' điểm từ ' + file.name);
+  }catch(err){
+    showToast(err.message || 'Không đọc được file này.');
+  }finally{
+    hideLoading();
+  }
+}
+
+uploadbtn.addEventListener('click', ()=> fileinput.click());
+fileinput.addEventListener('change', (e)=>{
+  const f = e.target.files[0];
+  if(f) handleFile(f);
+  fileinput.value = '';
+});
+
+let dragCounter = 0;
+window.addEventListener('dragenter', e=>{ e.preventDefault(); dragCounter++; document.body.style.opacity=0.8; });
+window.addEventListener('dragover', e=> e.preventDefault());
+window.addEventListener('dragleave', e=>{ dragCounter--; if(dragCounter<=0){ dragCounter=0; document.body.style.opacity=1; } });
+window.addEventListener('drop', e=>{
+  e.preventDefault(); dragCounter=0; document.body.style.opacity=1;
+  const f = e.dataTransfer.files && e.dataTransfer.files[0];
+  if(f) {
+    welcomeEl.classList.add('hide');
+    handleFile(f);
+  }
+});
+
+let playing = false;
+const speedSteps = [1,2,4,0.4];
+let speedIdx = 0, speed = 1;
+const playbtn = document.getElementById('playbtn');
+const iconplay = document.getElementById('iconplay');
+const iconpause = document.getElementById('iconpause');
+const speedbtn = document.getElementById('speedbtn');
+
+function play(){ playing = true; iconplay.style.display='none'; iconpause.style.display='block'; }
+function pause(){ playing = false; iconplay.style.display='block'; iconpause.style.display='none'; }
+playbtn.addEventListener('click', ()=>{
+  if(progressTweenId){ cancelAnimationFrame(progressTweenId); progressTweenId=null; }
+  if(progress>=N-1 && !playing) setProgress(0);
+  playing ? pause() : play();
+});
+speedbtn.addEventListener('click', ()=>{
+  speedIdx = (speedIdx+1)%speedSteps.length;
+  speed = speedSteps[speedIdx];
+  speedbtn.textContent = speed+'×';
+});
+scrub.addEventListener('input', ()=>{
+  if(progressTweenId){ cancelAnimationFrame(progressTweenId); progressTweenId=null; }
+  setProgress(parseFloat(scrub.value)); pause();
+});
+
+document.getElementById('replaybtn').addEventListener('click', ()=>{
+  exitOverview();
+  setProgress(0);
+  play();
+});
+
+let progressTweenId = null;
+function animateProgressTo(target, duration){
+  duration = duration || 650;
+  if(progressTweenId){ cancelAnimationFrame(progressTweenId); progressTweenId=null; }
+  const start = progress, t0 = performance.now();
+  function step(now){
+    const tt = Math.min(1, (now-t0)/duration);
+    const eased = 1 - Math.pow(1-tt, 3);
+    setProgress(start + (target-start)*eased);
+    if(tt < 1){ progressTweenId = requestAnimationFrame(step); }
+    else { progressTweenId = null; }
+  }
+  progressTweenId = requestAnimationFrame(step);
+}
+function nextStop(){ pause(); animateProgressTo(Math.min(N-1, Math.round(progress)+1)); }
+function prevStop(){ pause(); animateProgressTo(Math.max(0, Math.round(progress)-1)); }
+document.getElementById('prevbtn').addEventListener('click', prevStop);
+document.getElementById('nextbtn').addEventListener('click', nextStop);
+
+const dom = renderer.domElement;
+let dragMoved = false, dragStartX=0, dragStartY=0;
+function onDown(x,y){ dragging = true; dragMoved=false; dragStartX=x; dragStartY=y; lastX=x; lastY=y; }
+let lastX=0,lastY=0;
+function onMove(x,y){
+  if(!dragging) return;
+  const dx = x-lastX, dy = y-lastY;
+  if(Math.abs(x-dragStartX)>4 || Math.abs(y-dragStartY)>4) dragMoved = true;
+  userAz -= dx*0.0045;
+  userPhi = Math.max(-0.3, Math.min(0.65, userPhi - dy*0.0035));
+  lastX=x; lastY=y;
+}
+function onUp(){ dragging=false; }
+dom.addEventListener('mousedown', e=>onDown(e.clientX,e.clientY));
+window.addEventListener('mousemove', e=>onMove(e.clientX,e.clientY));
+window.addEventListener('mouseup', onUp);
+dom.addEventListener('touchstart', e=>{ const t=e.touches[0]; onDown(t.clientX,t.clientY); }, {passive:true});
+dom.addEventListener('touchmove', e=>{ const t=e.touches[0]; onMove(t.clientX,t.clientY); }, {passive:true});
+dom.addEventListener('touchend', onUp);
+dom.addEventListener('wheel', e=>{
+  zoomFactor = Math.max(0.45, Math.min(3.2, zoomFactor - e.deltaY*0.001));
+  e.preventDefault();
+}, {passive:false});
+
+setTimeout(()=>{ document.getElementById('hint').style.opacity = 1; }, 900);
+setTimeout(()=>{ document.getElementById('hint').style.opacity = 0; }, 6500);
+
+const raycaster = new THREE.Raycaster();
+const mouseNDC = new THREE.Vector2(-2,-2);
+let hoveredIndex = -1;
+dom.addEventListener('mousemove', e=>{
+  const r = dom.getBoundingClientRect();
+  mouseNDC.x = ((e.clientX-r.left)/r.width)*2-1;
+  mouseNDC.y = -((e.clientY-r.top)/r.height)*2+1;
+});
+dom.addEventListener('mouseleave', ()=>{ mouseNDC.set(-2,-2); });
+
+dom.addEventListener('click', e=>{
+  if(dragMoved || !N) return;
+  const r = dom.getBoundingClientRect();
+  const ndc = new THREE.Vector2(((e.clientX-r.left)/r.width)*2-1, -((e.clientY-r.top)/r.height)*2+1);
+  raycaster.setFromCamera(ndc, camera);
+  const heads = markers.map(m=>m.children[1]);
+  const hits = raycaster.intersectObjects(heads);
+  if(hits.length){
+    const idx = markers.indexOf(hits[0].object.parent);
+    if(idx>=0){ pause(); animateProgressTo(idx); }
+  }
+});
+
+const fsbtn = document.getElementById('fsbtn');
+const fsExpand = document.getElementById('fsExpand');
+const fsCompress = document.getElementById('fsCompress');
+function toggleFullscreen(){
+  if(!document.fullscreenElement){
+    document.documentElement.requestFullscreen && document.documentElement.requestFullscreen();
+  } else {
+    document.exitFullscreen && document.exitFullscreen();
+  }
+}
+document.addEventListener('fullscreenchange', ()=>{
+  const fs = !!document.fullscreenElement;
+  fsExpand.style.display = fs ? 'none':'block';
+  fsCompress.style.display = fs ? 'block':'none';
+});
+fsbtn.addEventListener('click', toggleFullscreen);
+
+const shotbtn = document.getElementById('shotbtn');
+const flashEl = document.getElementById('flash');
+function takeScreenshot(){
+  try{
+    renderer.setClearColor(0xF3E6F7, 1);
+    renderer.render(scene, camera);
+    const url = renderer.domElement.toDataURL('image/png');
+    renderer.setClearColor(0x000000, 0);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = (titleEl.textContent||'ban-do').replace(/[^\w\-]+/g,'_') + '-khoanhkhac.png';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    flashEl.style.opacity = 1;
+    setTimeout(()=>{ flashEl.style.opacity = 0; }, 90);
+    showToast('Đã lưu ảnh khung cảnh');
+  }catch(err){
+    renderer.setClearColor(0x000000, 0);
+    showToast('Trình duyệt này chưa hỗ trợ lưu ảnh.');
+  }
+}
+shotbtn.addEventListener('click', takeScreenshot);
+
+// ============================================================
+// LIST PANEL TOGGLE
+// ============================================================
+const listbtn = document.getElementById('listbtn');
+const listPanel = document.getElementById('listPanel');
+const closeListBtn = document.getElementById('closeListBtn');
+
+function toggleListPanel() {
+  listPanel.classList.toggle('show');
+  listbtn.classList.toggle('active', listPanel.classList.contains('show'));
+}
+listbtn.addEventListener('click', toggleListPanel);
+closeListBtn.addEventListener('click', () => {
+  listPanel.classList.remove('show');
+  listbtn.classList.remove('active');
+});
+
+// ============================================================
+// MUSIC SYSTEM WITH YOUTUBE API
+// ============================================================
+const musicbtn = document.getElementById('musicbtn');
+const musicOverlay = document.getElementById('musicOverlay');
+const customUrlInput = document.getElementById('customUrlInput');
+const btnPlayMusic = document.getElementById('btnPlayMusic');
+const btnStopMusic = document.getElementById('btnStopMusic');
+const btnCloseMusic = document.getElementById('btnCloseMusic');
+const trackRadios = document.querySelectorAll('input[name="mtrack"]');
+
+let globalAudio = new Audio();
+globalAudio.loop = true;
+let musicReady = false, musicPlaying = false;
+let padSynth, bellSynth, padLoop, bellLoop, musicBus;
+let ytPlayer = null;
+
+musicbtn.addEventListener('click', () => { musicOverlay.classList.add('show'); });
+btnCloseMusic.addEventListener('click', () => { musicOverlay.classList.remove('show'); });
+
+trackRadios.forEach(r => {
+  r.addEventListener('change', () => {
+    customUrlInput.style.display = r.value === 'custom' ? 'block' : 'none';
+  });
+});
+
+function stopAllMusic() {
+  if (musicPlaying && padLoop) {
+    if(musicBus) musicBus.volume.rampTo(-60, 0.6);
+    padLoop.stop(); bellLoop.stop();
+  }
+  globalAudio.pause(); globalAudio.src = '';
+  
+  if (ytPlayer && typeof ytPlayer.stopVideo === 'function') {
+    ytPlayer.stopVideo();
+  }
+  
+  musicPlaying = false;
+  musicbtn.classList.remove('playing');
+}
+
+function extractYTId(url) {
+  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([\w-]{11})/);
+  return match ? match[1] : null;
+}
+
+btnPlayMusic.addEventListener('click', () => {
+  stopAllMusic(); 
+  const selected = document.querySelector('input[name="mtrack"]:checked').value;
+  musicbtn.classList.add('playing');
+
+  if (selected === 'tone') {
+    if(typeof Tone === 'undefined'){ showToast('Lỗi tải Tone.js'); return; }
+    Tone.start().then(()=>{
+      if(!musicReady){
+        musicReady = true;
+        musicBus = new Tone.Volume(-60).toDestination();
+        const reverb = new Tone.Reverb({decay:6, wet:0.45}).connect(musicBus);
+        const chorus = new Tone.Chorus(0.6, 2.5, 0.25).connect(reverb).start();
+        padSynth = new Tone.PolySynth(Tone.Synth, { oscillator:{type:'sine'}, envelope:{attack:2.2, decay:1.5, sustain:0.55, release:5} }).connect(chorus);
+        padSynth.volume.value = -6;
+        const bellReverb = new Tone.Reverb({decay:3.5, wet:0.5}).connect(musicBus);
+        bellSynth = new Tone.FMSynth({ harmonicity:2.5, modulationIndex:2, envelope:{attack:0.01, decay:1.2, sustain:0, release:1.4}, modulationEnvelope:{attack:0.02, decay:0.4, sustain:0, release:0.4} }).connect(bellReverb);
+        bellSynth.volume.value = -16;
+        const chords = [['C4','E4','G4','B4'],['A3','C4','E4','G4'],['F3','A3','C4','E4'],['G3','B3','D4','F4']];
+        const bellNotes = ['C5','D5','E5','G5','A5','C6'];
+        let chordIdx = 0;
+        padLoop = new Tone.Loop(time=>{ padSynth.triggerAttackRelease(chords[chordIdx % chords.length], '3m', time); chordIdx++; }, '3m');
+        bellLoop = new Tone.Loop(time=>{ if(Math.random() < 0.55){ bellSynth.triggerAttackRelease(bellNotes[Math.floor(Math.random()*bellNotes.length)], '2n', time + Math.random()*0.3); } }, '1m');
+      }
+      if(Tone.Transport.state !== 'started') Tone.Transport.start();
+      padLoop.start(0); bellLoop.start('0:2');
+      musicBus.volume.rampTo(-14, 1.0);
+      musicPlaying = true;
+    });
+  } 
+  else if (selected === 'chill') {
+    globalAudio.src = 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3';
+    globalAudio.play();
+    musicPlaying = true;
+  } 
+  else if (selected === 'piano') {
+    globalAudio.src = 'https://cdn.pixabay.com/download/audio/2022/11/22/audio_febc508520.mp3';
+    globalAudio.play();
+    musicPlaying = true;
+  } 
+  else if (selected === 'custom') {
+    const url = customUrlInput.value.trim();
+    if(!url) { showToast('Bạn chưa nhập link nhạc!'); musicbtn.classList.remove('playing'); return; }
+    
+    const ytId = extractYTId(url);
+    if(ytId) {
+      showToast('Đang kết nối YouTube...');
+      if (ytPlayer) {
+          ytPlayer.loadVideoById(ytId);
+          musicPlaying = true;
+      } else {
+          ytPlayer = new YT.Player('yt-player-container', {
+              height: '10', width: '10', videoId: ytId,
+              playerVars: { 'autoplay': 1, 'loop': 1, 'playlist': ytId, 'controls': 0 },
+              events: {
+                  'onReady': (event) => { event.target.playVideo(); musicPlaying = true; },
+                  'onError': (e) => { 
+                      showToast("Video này bị giới hạn nhúng bởi tác giả. Hãy thử một bản nhạc khác nhé!"); 
+                      musicbtn.classList.remove('playing');
+                      musicPlaying = false;
+                  }
+              }
+          });
+      }
+    } else {
+      globalAudio.src = url;
+      globalAudio.play().catch(e => {
+          showToast("Không thể phát Link MP3 này. Vui lòng kiểm tra lại đường dẫn.");
+          musicbtn.classList.remove('playing');
+      });
+      musicPlaying = true;
+    }
+  }
+  
+  musicOverlay.classList.remove('show');
+});
+
+btnStopMusic.addEventListener('click', () => {
+  stopAllMusic();
+  musicOverlay.classList.remove('show');
+});
+
+const needleGroupEl = document.getElementById('needleGroup');
+function updateCompass(){
+  const deg = (lastAzForCompass*180/Math.PI) % 360;
+  needleGroupEl.style.transform = `rotate(${deg}deg)`;
+}
+
+window.addEventListener('keydown', e=>{
+  if(e.code==='Space'){ e.preventDefault(); playbtn.click(); }
+  else if(e.code==='ArrowRight'){ e.preventDefault(); nextStop(); }
+  else if(e.code==='ArrowLeft'){ e.preventDefault(); prevStop(); }
+  else if(e.code==='KeyF'){ toggleFullscreen(); }
+  else if(e.code==='KeyM'){ document.getElementById('musicbtn').click(); }
+});
+
+window.addEventListener('resize', ()=>{
+  camera.aspect = window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+const vTmp = new THREE.Vector3();
+let lastTime = performance.now();
+function animate(now){
+  requestAnimationFrame(animate);
+  const dt = Math.min(0.05,(now-lastTime)/1000);
+  lastTime = now;
+
+  if(playing && N>1){
+    setProgress(progress + dt*speed*0.9);
+    if(progress>=N-1){ pause(); enterOverview(); }
+  }
+  if(!dragging && !playing && !overviewMode){ idleT += dt*0.016; }
+  if(overviewMode){ overviewAz += dt*0.055; }
+
+  updateCamera(dt);
+  updateCompass();
+
+  const t = now*0.001;
+  markers.forEach((m,i)=>{
+    const ring = m.children[3];
+    const s = 1 + Math.sin(t*1.5 + i)*0.09;
+    ring.scale.set(s,s,s);
+    const icon = m.children[2];
+    icon.material.rotation = Math.sin(t*0.8+i)*0.08;
+
+    const elapsedSpawn = now - m.userData.spawnAt;
+    let pop = 1;
+    if(elapsedSpawn < 0) pop = 0.001;
+    else if(elapsedSpawn < 480) pop = Math.max(0.001, easeOutBack(elapsedSpawn/480));
+    
+    const target = pop * (m.userData.currentScaleTarget || 1);
+    m.userData.currentScale += (target - m.userData.currentScale) * Math.min(1, dt*9);
+    m.scale.setScalar(Math.max(0.001, m.userData.currentScale));
+  });
+  const pulse = 1 + Math.sin(t*2.6)*0.18;
+  tipHeart.scale.set(15*pulse,15*pulse,1);
+
+  if(N>0){
+    raycaster.setFromCamera(mouseNDC, camera);
+    const heads = markers.map(m=>m.children[1]);
+    const hits = raycaster.intersectObjects(heads);
+    hoveredIndex = hits.length ? markers.indexOf(hits[0].object.parent) : -1;
+
+    const activeIdx = Math.round(progress);
+    const showSet = new Set([activeIdx, hoveredIndex, ...selectedFeatured].filter(i=>i>=0 && i<N));
+    showSet.forEach(idx=>{
+      const m = markers[idx];
+      if(!m) return;
+      vTmp.set(m.position.x, m.userData.headY + 3, m.position.z);
+      vTmp.project(camera);
+      if(vTmp.z > 1){ const el=getLabel(idx); el.style.display='none'; return; }
+      const sx = (vTmp.x*0.5+0.5)*window.innerWidth;
+      const sy = (-vTmp.y*0.5+0.5)*window.innerHeight;
+      const el = getLabel(idx);
+      el.textContent = rawPts[idx].name;
+      el.classList.toggle('featured', !!rawPts[idx].featured);
+      el.style.left = sx+'px';
+      el.style.top = sy+'px';
+      el.style.display = (sx<-50||sx>window.innerWidth+50) ? 'none' : 'block';
+    });
+    labelPool.forEach((el,i)=>{
+      if(el && !showSet.has(i)) el.style.display='none';
+    });
+  }
+
+  for(let i=burstParticles.length-1;i>=0;i--){
+    const bp = burstParticles[i];
+    bp.userData.life += dt;
+    bp.userData.vel.y -= 22*dt;
+    bp.position.addScaledVector(bp.userData.vel, dt);
+    const lt = bp.userData.life/bp.userData.maxLife;
+    bp.material.opacity = Math.max(0, 0.95*(1-lt));
+    if(lt>=1){ burstGroup.remove(bp); burstParticles.splice(i,1); }
+  }
+
+  renderer.render(scene, camera);
+}
+requestAnimationFrame(animate);
+
+})();
+</script>
+</body>
+</html>
