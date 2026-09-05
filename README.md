@@ -1,4 +1,4 @@
-# 🗺️ Hành Trình Yêu Thương (our journey - timeline visualizer)
+# Hành Trình Yêu Thương (our journey - timeline visualizer)
 
 ![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
@@ -9,7 +9,7 @@ Một ứng dụng web tương tác giúp trực quan hóa dữ liệu bản đ�
 
 ---
 
-## ✨ Tính Năng Nổi Bật
+## Tính Năng Nổi Bật
 
 *   🚀 **Trình diễn 3D Cinematic:** Render đường đi (trail) với hiệu ứng phát sáng Neon Cam rực rỡ, điểm đến (marker) Xanh Dương hiện đại và một trái tim Đỏ Tươi lơ lửng dẫn đường bay qua từng tọa độ.
 *   🗺️ **Bản Đồ Nền OpenStreetMap:** Tích hợp trực tiếp thuật toán lấy gạch bản đồ (tiles) từ OpenStreetMap, hiển thị sắc nét, không lo lỗi CORS.
@@ -23,7 +23,7 @@ Một ứng dụng web tương tác giúp trực quan hóa dữ liệu bản đ�
 
 ---
 
-## 🛠️ Công Nghệ Sử Dụng
+## Công Nghệ Sử Dụng
 
 Dự án được xây dựng hoàn toàn bằng **Vanilla Web Technologies** (không sử dụng framework nặng nề như React/Vue), đảm bảo tốc độ load cực nhanh và chạy trực tiếp trên trình duyệt không cần cài đặt môi trường.
 
@@ -34,7 +34,7 @@ Dự án được xây dựng hoàn toàn bằng **Vanilla Web Technologies** (k
 
 ---
 
-## 🚀 Hướng Dẫn Sử Dụng
+## Hướng Dẫn Sử Dụng
 
 Vì là một ứng dụng Client-side 100%, bạn không cần phải cài đặt Node.js hay bất kỳ local server nào.
 
@@ -43,7 +43,7 @@ Vì là một ứng dụng Client-side 100%, bạn không cần phải cài đ�
 3. Tại màn hình chính, kéo thả hoặc bấm chọn nút tải lên file bản đồ (`.kml` hoặc `.kmz`) của bạn (có thể xuất file này từ Google My Maps hoặc Google Earth).
 4. Tận hưởng chuyến bay!
 
-### ⌨️ Hệ Thống Phím Tắt (Hotkeys)
+### Hệ Thống Phím Tắt (Hotkeys)
 *   <kbd>Space</kbd> : Phát / Tạm dừng chuyến bay.
 *   <kbd>→</kbd> / <kbd>←</kbd> : Bay đến điểm kế tiếp / Quay lại điểm trước.
 *   <kbd>M</kbd> : Mở bảng điều khiển Nhạc Nền.
@@ -52,7 +52,7 @@ Vì là một ứng dụng Client-side 100%, bạn không cần phải cài đ�
 
 ---
 
-## 📝 Giấy Phép (License)
+## Giấy Phép (License)
 
 Dự án này là mã nguồn mở. Bạn có thể tự do sử dụng, chỉnh sửa và tùy biến theo ý thích cá nhân.
 
