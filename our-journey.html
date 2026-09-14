@@ -477,18 +477,43 @@
 
   input[type=file]{ display:none; }
 
+  .stopcard-actions { display: flex; gap: 8px; margin-top: 12px; }
+  .stopcard-gmap-btn {
+    text-decoration: none; display: flex; align-items: center; justify-content: center;
+    padding: 8px 13px; border-radius: 999px; font-weight: 700; font-size: 11.5px;
+    background: var(--panel-strong); border: 1px solid var(--panel-border);
+    color: var(--blue-primary); box-shadow: var(--shadow-soft);
+    transition: transform .15s ease, box-shadow .2s ease, background .2s ease;
+    cursor: pointer;
+  }
+  .stopcard-gmap-btn:hover {
+    background: #fff; transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(33,150,243,0.3);
+  }
+  .stopcard-gmap-btn:active { transform: scale(0.95); }
+
   @media (max-width: 640px){
     #legend{ display:none; }
-    #stopcard{ left:14px; width:min(250px,74vw); padding:15px; }
+    #stopcard{ left:14px; width:min(260px,78vw); padding:14px; }
     #stopcard .name{ font-size:17px; }
-    #header{ padding:14px 14px 0 14px; }
+    #header{ padding:12px 14px 0 14px; flex-direction: column; align-items: stretch; gap: 8px; }
+    .headerRight{ align-items: flex-start; width: 100%; }
+    .iconrow{ width: 100%; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+    .iconrow::-webkit-scrollbar{ display: none; }
     #timeline-wrap{ padding:8px 12px 14px 12px; }
     #uploadbtn span.label{ display:none; }
-    #uploadbtn{ padding:8px 11px; }
-    .iconbtn{ width:36px; height:36px; }
+    #uploadbtn{ padding:8px 10px; }
+    .iconbtn{ width:36px; height:36px; flex-shrink: 0; }
     .navbtn{ width:32px; height:32px; }
-    .map-floating-controls{ right:14px; top:160px; }
+    .map-floating-controls{ right:12px; top:150px; }
     #listPanel { width: 100%; right: -100%; border-left: none; }
+    #readout{ max-width: 32vw; }
+  }
+
+  @media (max-width: 380px){
+    .mode-switch-container{ width: 142px; height: 32px; }
+    .mode-switch-btn{ font-size: 10px; line-height: 26px; }
+    #stopcard{ width: calc(100vw - 28px); max-width: none; }
   }
 
   @keyframes floatIn{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:translateY(0); } }
@@ -840,9 +865,14 @@
       <span id="deltatext">—</span>
     </div>
     <div class="cum" id="cumtext"></div>
-    <button id="featToggleBtn" class="feat-btn" style="margin-top: 12px; width: 100%; justify-content: center;">
-      📍 Đặt làm điểm quan trọng (Max 2)
-    </button>
+    <div class="stopcard-actions">
+      <button id="featToggleBtn" class="feat-btn" style="flex: 1; justify-content: center;">
+        📍 Đặt làm điểm quan trọng (Max 2)
+      </button>
+      <a id="stopGmapLink" href="#" target="_blank" class="stopcard-gmap-btn" title="Xem trên Google Maps">
+        🗺️
+      </a>
+    </div>
   </div>
 
   <div id="timeline-wrap">
@@ -1056,6 +1086,16 @@ function getFlagSvg(lang) {
   } else {
     return `<svg class="flag-svg" viewBox="0 0 60 40" width="23" height="15"><clipPath id="uk-c"><path d="M0,0 v40 h60 v-40 z"/></clipPath><clipPath id="uk-d"><path d="M30,20 L60,40 H0 z M30,20 L60,0 H0 z"/></clipPath><g clip-path="url(#uk-c)"><path d="M0,0 v40 h60 v-40 z" fill="#012169"/><path d="M0,0 L60,40 M60,0 L0,40" stroke="#fff" stroke-width="8"/><path d="M0,0 L60,40 M60,0 L0,40" clip-path="url(#uk-d)" stroke="#C8102E" stroke-width="4.5"/><path d="M30,0 v40 M0,20 h60" stroke="#fff" stroke-width="12"/><path d="M30,0 v40 M0,20 h60" stroke="#C8102E" stroke-width="7"/></g></svg>`;
   }
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 const SAMPLE_VIETNAM_JOURNEY = [
@@ -1353,11 +1393,12 @@ function interpolateRoute(coords, stepMeters = 20) {
 
 async function fetchRealisticRoute(coordinates) {
   const maxChunk = 24;
-  let fullCoords = [];
-  let totalMeters = 0;
-
+  const chunks = [];
   for (let i = 0; i < coordinates.length - 1; i += maxChunk - 1) {
-    const chunk = coordinates.slice(i, i + maxChunk);
+    chunks.push(coordinates.slice(i, i + maxChunk));
+  }
+
+  const chunkResults = await Promise.all(chunks.map(async (chunk) => {
     const coordsStr = chunk.map(c => `${c[0]},${c[1]}`).join(';');
     let segCoords = null;
     let segDist = 0;
@@ -1365,7 +1406,7 @@ async function fetchRealisticRoute(coordinates) {
     if (userMapboxToken) {
       try {
         const controller = new AbortController();
-        const tid = setTimeout(() => controller.abort(), 2500);
+        const tid = setTimeout(() => controller.abort(), 3500);
         const mbUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${coordsStr}?geometries=geojson&overview=full&access_token=${userMapboxToken}`;
         const res = await fetch(mbUrl, { signal: controller.signal });
         clearTimeout(tid);
@@ -1382,7 +1423,7 @@ async function fetchRealisticRoute(coordinates) {
     if (!segCoords) {
       try {
         const controller = new AbortController();
-        const tid = setTimeout(() => controller.abort(), 2500);
+        const tid = setTimeout(() => controller.abort(), 3500);
         const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${coordsStr}?geometries=geojson&overview=full`;
         const res = await fetch(osrmUrl, { signal: controller.signal });
         clearTimeout(tid);
@@ -1403,9 +1444,15 @@ async function fetchRealisticRoute(coordinates) {
       }
     }
 
-    totalMeters += segDist;
-    if (fullCoords.length > 0) fullCoords.push(...segCoords.slice(1));
-    else fullCoords.push(...segCoords);
+    return { coordinates: segCoords, distance: segDist };
+  }));
+
+  let fullCoords = [];
+  let totalMeters = 0;
+  for (const res of chunkResults) {
+    totalMeters += res.distance;
+    if (fullCoords.length > 0) fullCoords.push(...res.coordinates.slice(1));
+    else fullCoords.push(...res.coordinates);
   }
 
   const smoothResampled = interpolateRoute(fullCoords, 18);
@@ -1472,6 +1519,43 @@ function parseKml(text){
     const suEl = pm.getElementsByTagName('styleUrl')[0];
     out.push({name, lon, lat, colorHex: resolveColor(suEl ? suEl.textContent : null)});
   });
+
+  if (out.length === 0) {
+    // Trích xuất dự phòng từ LineString nếu file là track log
+    const lineStrings = Array.from(xml.getElementsByTagName('LineString'));
+    lineStrings.forEach((ls) => {
+      const coordEl = ls.getElementsByTagName('coordinates')[0];
+      if (!coordEl || !coordEl.textContent) return;
+      const rawText = coordEl.textContent.trim();
+      const tuples = rawText.split(/\s+/);
+      tuples.forEach((tStr, tIdx) => {
+        const parts = tStr.split(',');
+        if (parts.length >= 2) {
+          const lon = parseFloat(parts[0]);
+          const lat = parseFloat(parts[1]);
+          if (isFinite(lon) && isFinite(lat)) {
+            out.push({
+              name: tIdx === 0 ? 'Khởi hành' : (tIdx === tuples.length - 1 ? 'Đích đến' : `Mốc ${tIdx + 1}`),
+              lon,
+              lat,
+              colorHex: null
+            });
+          }
+        }
+      });
+    });
+
+    if (out.length > 80) {
+      const step = Math.ceil(out.length / 50);
+      const sampled = [out[0]];
+      for (let s = step; s < out.length - 1; s += step) {
+        sampled.push(out[s]);
+      }
+      sampled.push(out[out.length - 1]);
+      return sampled;
+    }
+  }
+
   return out;
 }
 
@@ -1700,7 +1784,7 @@ async function buildJourney(points, sourceLabel) {
     const el = document.createElement('div');
     el.className = 'custom-marker';
     el.innerHTML = `
-      <div class="marker-label" id="mlabel-${i}">${p.name}</div>
+      <div class="marker-label" id="mlabel-${i}">${escapeHtml(p.name)}</div>
       <div class="custom-marker-icon" id="micon-${i}" style="border-color:${hex}; color:${hex}">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 21s-7.5-4.6-10-9.3C.3 8 2 4 6 4c2.2 0 3.7 1.2 4.7 2.6C11.7 5.2 13.2 4 15.4 4c4 0 5.7 4 4 7.7C19.5 16.4 12 21 12 21z"/></svg>
       </div>
@@ -1737,7 +1821,7 @@ async function buildJourney(points, sourceLabel) {
     lItem.className = 'l-item';
     lItem.innerHTML = `
       <div class="l-item-idx">#${String(i+1).padStart(2,'0')}</div>
-      <div class="l-item-name">${p.name}</div>
+      <div class="l-item-name">${escapeHtml(p.name)}</div>
       <div class="l-item-meta">
         <span>
           ${fmtCoord(p)} 
@@ -1856,7 +1940,7 @@ function updateFeaturedUI() {
     const p = rawPts[idx];
     const row = document.createElement('div');
     row.className = 'legend-row featured';
-    row.innerHTML = `<span class="dot" style="background:${FEATURED_COLOR};color:${FEATURED_COLOR}"></span>${p.name}`;
+    row.innerHTML = `<span class="dot" style="background:${FEATURED_COLOR};color:${FEATURED_COLOR}"></span>${escapeHtml(p.name)}`;
     row.addEventListener('click', ()=>{ 
       pause(); 
       isFollowing = true; 
@@ -2006,6 +2090,11 @@ function setProgress(v) {
   idxtext.textContent = String(nearest + 1).padStart(2, '0') + ' / ' + N;
   stopname.textContent = p.name;
   stopcoords.textContent = fmtCoord(p);
+  const stopGmapLink = document.getElementById('stopGmapLink');
+  if (stopGmapLink && p) {
+    stopGmapLink.href = `https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lon}`;
+    stopGmapLink.title = I18N[currentLang].openGmap + ': ' + p.name;
+  }
   ridx.textContent = String(nearest + 1).padStart(2, '0');
   rname.textContent = p.name;
 
@@ -2183,15 +2272,13 @@ function loop(now){
     }
   }
 
-  // Camera damping: bám đón đầu êm ái, cho phép người dùng tự do zoom/pan bất cứ lúc nào
+  // Camera damping: bám đón đầu êm ái, chỉ cập nhật khi khoảng cách chênh lệch đáng kể
   if (isFollowing && desiredCamPos) {
     const curr = map.getCenter();
-    const targetLng = desiredCamPos[0];
-    const targetLat = desiredCamPos[1];
-    const dLng = targetLng - curr.lng;
-    const dLat = targetLat - curr.lat;
+    const dLng = desiredCamPos[0] - curr.lng;
+    const dLat = desiredCamPos[1] - curr.lat;
 
-    if (Math.abs(dLng) > 0.00001 || Math.abs(dLat) > 0.00001) {
+    if (Math.abs(dLng) > 0.000008 || Math.abs(dLat) > 0.000008) {
       map.setCenter([
         curr.lng + dLng * 0.12,
         curr.lat + dLat * 0.12
@@ -2377,8 +2464,13 @@ trackRadios.forEach(r => {
 
 function stopAllMusic() {
   if (musicPlaying && padLoop) {
-    if(musicBus) musicBus.volume.rampTo(-60, 0.6);
-    padLoop.stop(); bellLoop.stop();
+    if(musicBus) musicBus.volume.rampTo(-60, 0.4);
+    try {
+      padLoop.stop(); bellLoop.stop();
+      if (typeof Tone !== 'undefined' && Tone.Transport.state === 'started') {
+        Tone.Transport.pause();
+      }
+    } catch(e) {}
   }
   globalAudio.pause(); globalAudio.src = '';
   if (ytPlayer && typeof ytPlayer.stopVideo === 'function') {
@@ -2474,15 +2566,66 @@ btnStopMusic.addEventListener('click', () => {
   musicOverlay.classList.remove('show');
 });
 
+function closeAllModals() {
+  if (musicOverlay) musicOverlay.classList.remove('show');
+  if (layerModal) layerModal.classList.remove('show');
+  if (listPanel) {
+    listPanel.classList.remove('show');
+    if (listbtn) listbtn.classList.remove('active');
+  }
+}
+
+// Đóng modal khi nhấp chuột vào nền tối mờ bên ngoài
+musicOverlay.addEventListener('click', (e) => {
+  if (e.target === musicOverlay) closeAllModals();
+});
+layerModal.addEventListener('click', (e) => {
+  if (e.target === layerModal) closeAllModals();
+});
+
 // ============================================================
 // PHÍM TẮT TIỆN DỤNG
 // ============================================================
-window.addEventListener('keydown', e=>{
-  if(e.code === 'Space'){ e.preventDefault(); playbtn.click(); }
-  else if(e.code === 'ArrowRight'){ e.preventDefault(); nextStop(); }
-  else if(e.code === 'ArrowLeft'){ e.preventDefault(); prevStop(); }
-  else if(e.code === 'KeyF'){ toggleFullscreen(); }
-  else if(e.code === 'KeyM'){ document.getElementById('musicbtn').click(); }
+window.addEventListener('keydown', e => {
+  // Tránh xung đột phím khi người dùng đang nhập dữ liệu trong input hoặc textarea
+  if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
+    if (e.code === 'Escape') {
+      e.target.blur();
+      closeAllModals();
+    }
+    return;
+  }
+
+  if (e.code === 'Escape') {
+    closeAllModals();
+  } else if (e.code === 'Space') {
+    e.preventDefault();
+    playbtn.click();
+  } else if (e.code === 'ArrowRight') {
+    e.preventDefault();
+    nextStop();
+  } else if (e.code === 'ArrowLeft') {
+    e.preventDefault();
+    prevStop();
+  } else if (e.code === 'Home') {
+    e.preventDefault();
+    if (progressTweenId) { cancelAnimationFrame(progressTweenId); progressTweenId = null; }
+    pause();
+    isFollowing = true;
+    updateFollowUI();
+    animateProgressTo(0);
+  } else if (e.code === 'End') {
+    e.preventDefault();
+    if (progressTweenId) { cancelAnimationFrame(progressTweenId); progressTweenId = null; }
+    pause();
+    isFollowing = true;
+    updateFollowUI();
+    animateProgressTo(Math.max(0, N - 1));
+  } else if (e.code === 'KeyF') {
+    toggleFullscreen();
+  } else if (e.code === 'KeyM') {
+    document.getElementById('musicbtn').click();
+  }
 });
 
 // ============================================================

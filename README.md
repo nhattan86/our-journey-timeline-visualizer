@@ -1,6 +1,6 @@
 # Hành Trình Yêu Thương (Our Journey - Timeline Visualizer)
 
-![Version](https://img.shields.io/badge/version-1.2-brightgreen?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-1.3-brightgreen?style=for-the-badge)
 ![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
@@ -21,12 +21,12 @@
   - **Mapbox Streets v12**: Tùy biến thông qua Mapbox Access Token cá nhân.
 
 ### 2. Hai chế độ di chuyển (Routing Modes)
-- **Xe chạy (Navigation)**: Tự động kết nối OSRM (Open Source Routing Machine) và Mapbox Directions API để vẽ đường đi thực tế uốn lượn theo mạng lưới giao thông đường bộ.
+- **Xe chạy (Navigation)**: Tự động kết nối OSRM (Open Source Routing Machine) và Mapbox Directions API để vẽ đường đi thực tế uốn lượn theo mạng lưới giao thông đường bộ với cơ chế tải song song siêu tốc.
 - **Chim bay (Direct)**: Nối thẳng các tọa độ địa lý theo thuật toán Haversine, phù hợp với hành trình bay hoặc các chặng di chuyển thẳng.
 - Bộ lọc nội suy (Interpolation) giúp chuyển động của icon dẫn đường luôn êm ái qua từng góc cua.
 
 ### 3. Điều hướng và góc nhìn Camera
-- Chế độ tự động bám theo tâm điểm (Auto Camera Tracking) giữ khung hình luôn tập trung vào vị trí hiện tại của hành trình.
+- Chế độ tự động bám theo tâm điểm (Auto Camera Tracking) giữ khung hình luôn tập trung vào vị trí hiện tại của hành trình với cơ chế đón đầu thông minh.
 - Người dùng có thể chủ động kéo thả hoặc phóng to, thu nhỏ bản đồ bất kỳ lúc nào; hệ thống có nút căn giữa (Recenter) để tiếp tục bám theo lộ trình.
 - La bàn (Compass) tự động quay theo hướng nhìn thực tế và hỗ trợ click để đưa bản đồ quay về hướng Bắc.
 - Cụm nút phóng to (+) và thu nhỏ (-) trực quan ngay trên giao diện.
@@ -39,8 +39,8 @@
   - Tỷ lệ phần trăm tiến độ chuyến đi.
 - **Thẻ thông tin chi tiết (Stop Card)**:
   - Thứ tự điểm, tên địa điểm và tọa độ GPS (kinh độ, vĩ độ).
-  - Khoảng cách giữa hai điểm liên tiếp (km).
-  - Khoảng cách tích lũy từ điểm xuất phát.
+  - Khoảng cách giữa hai điểm liên tiếp (km) và khoảng cách tích lũy.
+  - Tích hợp nút mở nhanh tọa độ trạm dừng hiện tại trực tiếp trên Google Maps.
 - **Điểm mốc quan trọng (Featured Points)**:
   - Cho phép ghim tối đa 2 điểm đặc biệt để đo khoảng cách chim bay trực tiếp giữa hai mốc này.
 - **Tổng kết hành trình (Journey Summary)**:
@@ -62,11 +62,12 @@
 - Tự động lưu tùy chọn ngôn ngữ vào trình duyệt (localStorage).
 
 ### 8. Tiện ích bổ sung & Lộ trình mẫu
-- **Lộ trình mẫu Xuyên Việt**: Tích hợp sẵn nút trải nghiệm nhanh hành trình 9 danh lam thắng cảnh dọc Việt Nam (Hà Nội, Hạ Long, Huế, Đà Nẵng, Hội An, Nha Trang, Đà Lạt, TP. Hồ Chí Minh, Phú Quốc) mà không cần chuẩn bị trước tệp KML.
+- **Khẳng định chủ quyền biển đảo**: Đánh dấu trực quan Quần đảo Hoàng Sa, Quần đảo Trường Sa, Biển Đông và các đảo tiêu biểu thuộc chủ quyền Việt Nam.
+- **Lộ trình mẫu Xuyên Việt**: Tích hợp sẵn nút trải nghiệm nhanh hành trình 9 danh lam thắng cảnh dọc Việt Nam mà không cần chuẩn bị trước tệp KML.
 - Chụp ảnh khung cảnh (Screenshot): Xuất góc nhìn 3D hiện tại thành tệp ảnh `.png` sắc nét.
 - Chế độ Toàn màn hình (Fullscreen).
 - Thanh trượt thời gian (Timeline scrubber) kèm danh sách các điểm mốc (ticks) trực quan.
-- Tùy chỉnh tốc độ phát linh hoạt (1x, 1.5x, 2x, 0.5x).
+- Tùy chỉnh tốc độ phát linh hoạt (1x, 1.5x, 2x, 0.4x).
 
 ---
 
@@ -96,6 +97,9 @@ Dự án hoạt động hoàn toàn ở phía trình duyệt (Client-side 100%),
 | `Space` | Phát / Tạm dừng hành trình |
 | `->` (Mũi tên phải) | Chuyển đến địa điểm kế tiếp |
 | `<-` (Mũi tên trái) | Quay lại địa điểm trước đó |
+| `Home` | Quay về điểm xuất phát ban đầu |
+| `End` | Chuyển nhanh tới điểm kết thúc hành trình |
+| `Escape` | Đóng nhanh các hộp thoại (Nhạc, Bản đồ, Danh sách) |
 | `M` | Mở bảng điều khiển âm nhạc |
 | `F` | Bật / Tắt chế độ toàn màn hình |
 | `Kéo chuột trái` | Di chuyển bản đồ (Pan) |
@@ -106,9 +110,25 @@ Dự án hoạt động hoàn toàn ở phía trình duyệt (Client-side 100%),
 
 ## Nhật Ký Phiên Bản (Changelog)
 
-<details>
+<details open>
 <summary><b>Xem chi tiết lịch sử cập nhật</b></summary>
 <br>
+
+### Phiên bản 1.3
+- **Tối ưu hóa hiệu năng & tiết kiệm pin (Performance & Battery)**:
+  - Tải định tuyến song song (`Promise.all`) cho các chunk OSRM / Mapbox, giảm 60-70% thời gian xử lý lộ trình dài.
+  - Tối ưu vòng lặp render với cơ chế **Smart Idle Damping**, ngưng tính toán camera lerp khi xe/camera đã ổn định vị trí.
+  - Tự động tắt và giải phóng luồng âm thanh Tone.js khi tạm dừng hoặc tắt nhạc.
+- **Bảo mật dữ liệu (Security Hardening)**:
+  - Khử triệt để nguy cơ tấn công XSS từ các tệp KML/KMZ không rõ nguồn gốc bằng cơ chế mã hóa chuỗi HTML an toàn (`escapeHtml`).
+- **Mở rộng định dạng KML**:
+  - Tự động nhận diện và trích xuất dữ liệu từ các thẻ `<LineString>` / GPS track log khi file KML không chứa thẻ `<Point>` độc lập.
+- **Nâng cấp trải nghiệm người dùng (UX & Shortcuts)**:
+  - Sửa lỗi xung đột phím tắt khi người dùng đang nhập nội dung trong ô input (URL YouTube / Mapbox Token).
+  - Bổ sung phím tắt `Escape` (đóng hộp thoại) và hỗ trợ click ra vùng backdrop tối để đóng modal.
+  - Bổ sung phím tắt `Home` (về đầu) và `End` (về cuối).
+  - Tích hợp nút xem nhanh trạm hiện tại trên Google Maps ngay trong thẻ Stop Card.
+  - Tinh chỉnh bố cục CSS Responsive cho màn hình di động nhỏ (<390px).
 
 ### Phiên bản 1.2
 - **Hỗ trợ song ngữ (VI / EN)**: Nút chuyển đổi ngôn ngữ cờ (Việt Nam 🇻🇳 / UK 🇬🇧) chuyển đổi toàn diện toàn bộ nhãn, thông số, giao diện.
