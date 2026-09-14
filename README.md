@@ -1,6 +1,6 @@
 # Hành Trình Yêu Thương (Our Journey - Timeline Visualizer)
 
-![Version](https://img.shields.io/badge/version-1.1-brightgreen?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-1.2-brightgreen?style=for-the-badge)
 ![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
@@ -56,7 +56,13 @@
 - **Lofi Chill & Piano**: Các bản nhạc mẫu tích hợp sẵn.
 - **Phát nhạc theo liên kết**: Hỗ trợ nhập link video YouTube (chạy ngầm thông qua YouTube IFrame Player API) hoặc đường dẫn trực tiếp tới file `.mp3`.
 
-### 7. Tiện ích bổ sung
+### 7. Hỗ trợ song ngữ (Tiếng Việt & English)
+- Nút chuyển ngôn ngữ hình lá cờ (🇻🇳 / 🇬🇧) ngay trên thanh điều khiển.
+- Chuyển đổi toàn diện toàn bộ giao diện: tiêu đề, mô tả, thanh thông số, chú thích, hộp thoại nhạc, tùy chọn bản đồ, thông báo toast và các nhãn địa lý.
+- Tự động lưu tùy chọn ngôn ngữ vào trình duyệt (localStorage).
+
+### 8. Tiện ích bổ sung & Lộ trình mẫu
+- **Lộ trình mẫu Xuyên Việt**: Tích hợp sẵn nút trải nghiệm nhanh hành trình 9 danh lam thắng cảnh dọc Việt Nam (Hà Nội, Hạ Long, Huế, Đà Nẵng, Hội An, Nha Trang, Đà Lạt, TP. Hồ Chí Minh, Phú Quốc) mà không cần chuẩn bị trước tệp KML.
 - Chụp ảnh khung cảnh (Screenshot): Xuất góc nhìn 3D hiện tại thành tệp ảnh `.png` sắc nét.
 - Chế độ Toàn màn hình (Fullscreen).
 - Thanh trượt thời gian (Timeline scrubber) kèm danh sách các điểm mốc (ticks) trực quan.
@@ -103,6 +109,10 @@ Dự án hoạt động hoàn toàn ở phía trình duyệt (Client-side 100%),
 <details>
 <summary><b>Xem chi tiết lịch sử cập nhật</b></summary>
 <br>
+
+### Phiên bản 1.2
+- **Hỗ trợ song ngữ (VI / EN)**: Nút chuyển đổi ngôn ngữ cờ (Việt Nam 🇻🇳 / UK 🇬🇧) chuyển đổi toàn diện toàn bộ nhãn, thông số, giao diện.
+- **Bổ sung lộ trình mẫu**: Nút trải nghiệm nhanh hành trình danh thắng xuyên Việt mà không cần chuẩn bị tệp KML.
 
 ### Phiên bản 1.1
 - **Nâng cấp Map Engine**: Chuyển đổi từ cơ chế render gạch Three.js sang MapLibre GL JS 3D Engine, nâng cao hiệu năng và độ ổn định trên mọi thiết bị.

@@ -528,6 +528,151 @@
     position:fixed; inset:0; background:#fff; opacity:0; pointer-events:none;
     z-index:90; transition: opacity .25s ease;
   }
+
+  /* NÚT CHUYỂN NGÔN NGỮ CỜ (FLAG TOGGLE) */
+  #langbtn {
+    padding: 0;
+    overflow: hidden;
+    border: 1.5px solid var(--panel-border);
+    cursor: pointer;
+  }
+  #langbtn .flag-container {
+    width: 23px;
+    height: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2.5px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  #langbtn .flag-svg {
+    width: 23px !important;
+    height: 15px !important;
+    display: block;
+  }
+  #langbtn:hover .flag-container {
+    transform: scale(1.12);
+  }
+  #langbtn.anim .flag-container {
+    transform: scale(0.5) rotateY(180deg);
+  }
+
+  /* NÚT LỘ TRÌNH MẪU */
+  #welcomeSample {
+    background: var(--panel-strong);
+    color: var(--ink);
+    border: 1.5px solid var(--panel-border);
+  }
+  #welcomeSample:hover {
+    background: #ffffff;
+    color: var(--blue-primary);
+  }
+
+  /* MARKER CHỦ QUYỀN BIỂN ĐẢO HOÀNG SA - TRƯỜNG SA (VIỆT NAM) */
+  .vietnam-sovereignty-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(255, 248, 251, 0.95);
+    border: 1.5px solid #DA251D;
+    border-radius: 999px;
+    padding: 5px 12px 5px 8px;
+    box-shadow: 0 4px 16px rgba(218, 37, 29, 0.28), 0 2px 6px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    cursor: pointer;
+    pointer-events: auto;
+    user-select: none;
+    transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.3, 1), box-shadow 0.22s ease, background 0.2s ease;
+    white-space: nowrap;
+    transform: translate(-50%, -50%);
+  }
+  .vietnam-sovereignty-badge:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+    box-shadow: 0 8px 24px rgba(218, 37, 29, 0.45);
+    background: #ffffff;
+  }
+  .vietnam-flag-icon {
+    width: 22px;
+    height: 15px;
+    border-radius: 2px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    flex-shrink: 0;
+    display: flex;
+  }
+  .sovereignty-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.18;
+  }
+  .sovereignty-name {
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 700;
+    font-size: 11.5px;
+    color: #6B4A5C;
+    letter-spacing: 0.01em;
+  }
+  .sovereignty-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 9.5px;
+    color: #DA251D;
+    letter-spacing: 0.04em;
+  }
+  .sea-label-marker {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 0.16em;
+    color: rgba(107, 74, 92, 0.45);
+    text-shadow: 0 1px 3px rgba(255,255,255,0.85);
+    pointer-events: none;
+    white-space: nowrap;
+    user-select: none;
+    transform: translate(-50%, -50%);
+  }
+  .island-pin-marker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: auto;
+    cursor: pointer;
+    transform: translate(-50%, -50%);
+    user-select: none;
+  }
+  .island-pin-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #DA251D;
+    border: 1.5px solid #FFD700;
+    box-shadow: 0 0 6px rgba(218, 37, 29, 0.85);
+  }
+  .island-pin-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    color: #6B4A5C;
+    background: rgba(255, 248, 251, 0.92);
+    border: 1px solid rgba(221, 169, 104, 0.45);
+    padding: 1px 5px;
+    border-radius: 4px;
+    white-space: nowrap;
+    margin-top: 2px;
+    backdrop-filter: blur(4px);
+    pointer-events: none;
+    opacity: 0.88;
+    transition: opacity 0.2s, color 0.2s;
+  }
+  .island-pin-marker:hover .island-pin-label {
+    opacity: 1;
+    color: #DA251D;
+    border-color: #DA251D;
+  }
 </style>
 </head>
 <body>
@@ -541,6 +686,7 @@
     <p>Trình chiếu hành trình <b>3D Navigation</b> từ file <b>.kml / .kmz</b> bám sát từng cung đường thực tế.</p>
     <div class="wbtns">
       <button id="welcomeUpload">📤 Tải bản đồ lên</button>
+      <button id="welcomeSample">✨ Khám phá lộ trình mẫu</button>
     </div>
   </div>
 </div>
@@ -654,6 +800,10 @@
           <button type="button" class="mode-switch-btn" id="btnModeDirect">Chim bay</button>
         </div>
 
+        <button id="langbtn" class="iconbtn" title="Đổi ngôn ngữ / Switch Language">
+          <div class="flag-container" id="langFlagContainer"></div>
+        </button>
+
         <button id="uploadbtn" title="Tải lên bản đồ khác">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           <span class="label">Đổi bản đồ</span>
@@ -715,6 +865,306 @@
 
 <script>
 (function(){
+
+// ============================================================
+// HỆ THỐNG ĐA NGÔN NGỮ (I18N) & QUẢN LÝ CHỦ QUYỀN BIỂN ĐẢO
+// ============================================================
+let currentLang = localStorage.getItem('app_lang') || 'vi';
+
+const I18N = {
+  vi: {
+    pageTitle: "Hành Trình Yêu Thương - 3D Map Tracking",
+    loadingMap: "đang khởi tạo bản đồ 3D…",
+    loadingRoute: "đang thiết lập lộ trình 3D…",
+    loadingFile: "đang đọc ",
+    loadingLayer: "đang chuyển kiểu bản đồ…",
+    welcomeTitle: "Hành Trình Yêu Thương",
+    welcomeDesc: "Trình chiếu hành trình <b>3D Navigation</b> từ file <b>.kml / .kmz</b> bám sát từng cung đường thực tế.",
+    welcomeUploadBtn: "📤 Tải bản đồ lên",
+    welcomeSampleBtn: "✨ Khám phá lộ trình mẫu",
+    headerTitle: "Hành Trình",
+    headerSubDefault: "Đường chạy uốn lượn theo giao thông thực tế — kéo thanh thời gian để bay lượn.",
+    subPoints: "{n} địa điểm — {mode}.",
+    modeNavText: "đường xe chạy thực tế",
+    modeDirectText: "đường chim bay trực tiếp",
+    statStops: "địa điểm",
+    statTotalKm: "km tổng",
+    statTraveledKm: "km đã đi",
+    statProgress: "hành trình",
+    btnModeNav: "Xe chạy",
+    btnModeDirect: "Chim bay",
+    modeSwitchTitle: "Gạt trái: Xe chạy | Gạt phải: Chim bay",
+    uploadBtnText: "Đổi bản đồ",
+    uploadBtnTitle: "Tải lên bản đồ khác",
+    langBtnTitle: "Ngôn ngữ: Tiếng Việt (Bấm để chuyển sang English)",
+    layerBtnTitle: "Đổi kiểu hiển thị bản đồ",
+    listBtnTitle: "Xem danh sách địa điểm",
+    musicBtnTitle: "Nhạc nền (phím M)",
+    shotBtnTitle: "Lưu ảnh khung cảnh",
+    fsBtnTitle: "Toàn màn hình (phím F)",
+    zoomInTitle: "Phóng to",
+    zoomOutTitle: "Thu nhỏ",
+    recenterTitle: "Bật/Tắt theo dõi icon tim",
+    compassTitle: "Xoay về hướng Bắc",
+    featBtnSet: "📍 Đặt làm điểm quan trọng (Max 2)",
+    featBtnUnset: "✓ Hủy điểm quan trọng",
+    prevBtnTitle: "Điểm trước (←)",
+    nextBtnTitle: "Điểm kế tiếp (→)",
+    playBtnLabel: "Phát",
+    pauseBtnLabel: "Tạm dừng",
+    speedBtn: "Tốc độ",
+    startPoint: "Bắt đầu",
+    deltaFromPrev: "{dist} km từ điểm trước",
+    traveledDist: "Đã đi {traveled} / {total} km",
+    startStopText: "Điểm khởi hành",
+    legendTotal: "Tổng số điểm đã lưu",
+    legendDist: "Khoảng cách ≈ ",
+    sumTitle: "Tổng kết hành trình",
+    sumStops: "địa điểm",
+    sumKm: "km lộ trình",
+    replayBtn: "↺ Xem lại từ đầu",
+    musicTitle: "🎵 Chọn nhạc nền",
+    musicTone: "Bản phối tự tạo (Tone.js)",
+    musicChill: "Lofi Chill (Mẫu)",
+    musicPiano: "Piano Nhẹ Nhàng (Mẫu)",
+    musicCustom: "🔗 Nhập link YouTube / MP3 tùy ý",
+    musicCustomPlaceholder: "Ví dụ: https://youtu.be/xxx hoặc .mp3",
+    musicPlay: "Phát nhạc",
+    musicStop: "Tắt nhạc",
+    musicClose: "Đóng",
+    layerTitle: "🗺️ Tùy chọn bản đồ",
+    layerCarto: "<b>Pastel Voyager</b> (Mặc định - Màu hồng dịu)",
+    layerGoogle: "<b>Google Maps</b> (Độ nét cao, tiếng Việt)",
+    layerOsm: "<b>ESRI World Street</b> (Bản đồ đường phố quốc tế)",
+    layerMapbox: "<b>Mapbox Streets v12</b> (Nhập Access Token)",
+    layerApply: "Áp dụng",
+    layerClose: "Đóng",
+    listTitle: "Danh sách địa điểm",
+    openGmap: "Google Maps",
+    toastSwitchedLang: "Đã chuyển sang Tiếng Việt",
+    toastLoadedPoints: "Đã nạp {n} điểm thành công!",
+    toastSavedScreenshot: "Đã lưu ảnh khung cảnh!",
+    toastScreenshotError: "Trình duyệt chưa hỗ trợ lưu ảnh canvas.",
+    toastNoUrl: "Bạn chưa nhập link nhạc!",
+    toastConnectingYt: "Đang kết nối YouTube...",
+    toastYtBlocked: "Video này không cho phép nhúng ngoài YouTube.",
+    toastMp3Error: "Không thể phát Link MP3 này.",
+    toastNeedToken: "Vui lòng nhập Mapbox Access Token.",
+    toastSwitchedMode: "Đã chuyển: {mode}",
+    hsName: "Quần đảo Hoàng Sa",
+    hsTag: "Việt Nam",
+    hsPopup: "Quần đảo Hoàng Sa thuộc chủ quyền của Việt Nam (Huyện đảo Hoàng Sa, TP. Đà Nẵng).",
+    tsName: "Quần đảo Trường Sa",
+    tsTag: "Việt Nam",
+    tsPopup: "Quần đảo Trường Sa thuộc chủ quyền của Việt Nam (Huyện đảo Trường Sa, Tỉnh Khánh Hòa).",
+    seaName: "Biển Đông (Việt Nam)",
+    sampleJourneyTitle: "Hành Trình Xuyên Việt"
+  },
+  en: {
+    pageTitle: "Our Journey - 3D Map Tracking",
+    loadingMap: "initializing 3D map…",
+    loadingRoute: "calculating 3D route…",
+    loadingFile: "reading ",
+    loadingLayer: "switching map style…",
+    welcomeTitle: "Our Journey",
+    welcomeDesc: "Experience <b>3D Navigation</b> playback from <b>.kml / .kmz</b> files following realistic routes.",
+    welcomeUploadBtn: "📤 Upload Map File",
+    welcomeSampleBtn: "✨ Explore Sample Journey",
+    headerTitle: "Our Journey",
+    headerSubDefault: "Realistic road navigation — scrub the timeline to explore.",
+    subPoints: "{n} locations — {mode}.",
+    modeNavText: "realistic driving route",
+    modeDirectText: "direct flight line",
+    statStops: "stops",
+    statTotalKm: "total km",
+    statTraveledKm: "traveled km",
+    statProgress: "progress",
+    btnModeNav: "Navigation",
+    btnModeDirect: "Direct",
+    modeSwitchTitle: "Left: Navigation | Right: Direct Flight",
+    uploadBtnText: "Change Map",
+    uploadBtnTitle: "Upload another map",
+    langBtnTitle: "Language: English (Click to switch to Tiếng Việt)",
+    layerBtnTitle: "Change map style",
+    listBtnTitle: "View location list",
+    musicBtnTitle: "Background music (M)",
+    shotBtnTitle: "Save screenshot",
+    fsBtnTitle: "Fullscreen (F)",
+    zoomInTitle: "Zoom In",
+    zoomOutTitle: "Zoom Out",
+    recenterTitle: "Toggle follow camera",
+    compassTitle: "Reset to North",
+    featBtnSet: "📍 Set as featured point (Max 2)",
+    featBtnUnset: "✓ Remove featured point",
+    prevBtnTitle: "Previous stop (←)",
+    nextBtnTitle: "Next stop (→)",
+    playBtnLabel: "Play",
+    pauseBtnLabel: "Pause",
+    speedBtn: "Speed",
+    startPoint: "Start",
+    deltaFromPrev: "{dist} km from previous stop",
+    traveledDist: "Traveled {traveled} / {total} km",
+    startStopText: "Starting point",
+    legendTotal: "Total saved locations",
+    legendDist: "Distance ≈ ",
+    sumTitle: "Journey Summary",
+    sumStops: "locations",
+    sumKm: "total km",
+    replayBtn: "↺ Replay from start",
+    musicTitle: "🎵 Background Music",
+    musicTone: "Generative Ambient (Tone.js)",
+    musicChill: "Lofi Chill (Sample)",
+    musicPiano: "Soft Piano (Sample)",
+    musicCustom: "🔗 Custom YouTube / MP3 link",
+    musicCustomPlaceholder: "e.g. https://youtu.be/xxx or .mp3",
+    musicPlay: "Play Music",
+    musicStop: "Stop Music",
+    musicClose: "Close",
+    layerTitle: "🗺️ Map Style Options",
+    layerCarto: "<b>Pastel Voyager</b> (Default - Soft Pink)",
+    layerGoogle: "<b>Google Maps</b> (High Definition)",
+    layerOsm: "<b>ESRI World Street</b> (Global Street Map)",
+    layerMapbox: "<b>Mapbox Streets v12</b> (Enter Access Token)",
+    layerApply: "Apply",
+    layerClose: "Close",
+    listTitle: "Location List",
+    openGmap: "Google Maps",
+    toastSwitchedLang: "Switched to English",
+    toastLoadedPoints: "Successfully loaded {n} locations!",
+    toastSavedScreenshot: "Screenshot saved successfully!",
+    toastScreenshotError: "Browser does not support canvas saving.",
+    toastNoUrl: "Please enter a music link!",
+    toastConnectingYt: "Connecting to YouTube...",
+    toastYtBlocked: "This video cannot be embedded outside YouTube.",
+    toastMp3Error: "Cannot play this MP3 link.",
+    toastNeedToken: "Please enter Mapbox Access Token.",
+    toastSwitchedMode: "Switched to: {mode}",
+    hsName: "Paracel Islands",
+    hsTag: "Vietnam",
+    hsPopup: "Paracel Islands are an inseparable sovereign territory of Vietnam (Hoang Sa District, Da Nang City).",
+    tsName: "Spratly Islands",
+    tsTag: "Vietnam",
+    tsPopup: "Spratly Islands are an inseparable sovereign territory of Vietnam (Truong Sa District, Khanh Hoa Province).",
+    seaName: "East Sea (Vietnam)",
+    sampleJourneyTitle: "Vietnam Journey"
+  }
+};
+
+function getFlagSvg(lang) {
+  if (lang === 'vi') {
+    return `<svg class="flag-svg" viewBox="0 0 30 20" width="23" height="15"><rect width="30" height="20" fill="#DA251D"/><polygon points="15,3.8 16.5,8.8 21.7,8.8 17.5,11.8 19.1,16.5 15,13.5 10.9,16.5 12.5,11.8 8.3,8.8 13.5,8.8" fill="#FFFF00"/></svg>`;
+  } else {
+    return `<svg class="flag-svg" viewBox="0 0 60 40" width="23" height="15"><clipPath id="uk-c"><path d="M0,0 v40 h60 v-40 z"/></clipPath><clipPath id="uk-d"><path d="M30,20 L60,40 H0 z M30,20 L60,0 H0 z"/></clipPath><g clip-path="url(#uk-c)"><path d="M0,0 v40 h60 v-40 z" fill="#012169"/><path d="M0,0 L60,40 M60,0 L0,40" stroke="#fff" stroke-width="8"/><path d="M0,0 L60,40 M60,0 L0,40" clip-path="url(#uk-d)" stroke="#C8102E" stroke-width="4.5"/><path d="M30,0 v40 M0,20 h60" stroke="#fff" stroke-width="12"/><path d="M30,0 v40 M0,20 h60" stroke="#C8102E" stroke-width="7"/></g></svg>`;
+  }
+}
+
+const SAMPLE_VIETNAM_JOURNEY = [
+  { name: "Hồ Hoàn Kiếm (Hà Nội)", lon: 105.8524, lat: 21.0285 },
+  { name: "Vịnh Hạ Long (Quảng Ninh)", lon: 107.0843, lat: 20.9500 },
+  { name: "Kinh Thành Huế", lon: 107.5790, lat: 16.4637 },
+  { name: "Cầu Vàng (Bà Nà, Đà Nẵng)", lon: 108.2022, lat: 16.0544 },
+  { name: "Phố Cổ Hội An (Quảng Nam)", lon: 108.3271, lat: 15.8801 },
+  { name: "Bãi Biển Nha Trang (Khánh Hòa)", lon: 109.1967, lat: 12.2388 },
+  { name: "Hồ Xuân Hương (Đà Lạt)", lon: 108.4442, lat: 11.9404 },
+  { name: "Nhà Thờ Đức Bà (TP. Hồ Chí Minh)", lon: 106.6990, lat: 10.7798 },
+  { name: "Đảo Ngọc Phú Quốc (Kiên Giang)", lon: 103.9630, lat: 10.2289 }
+];
+
+let sovereigntyMarkers = [];
+
+function setupSovereigntyMarkers() {
+  sovereigntyMarkers.forEach(m => {
+    try { m.remove(); } catch(e) {}
+  });
+  sovereigntyMarkers = [];
+
+  const t = I18N[currentLang];
+
+  // 1. Quần đảo Hoàng Sa & Quần đảo Trường Sa
+  const territories = [
+    {
+      coords: [111.9, 16.5],
+      name: t.hsName,
+      tag: t.hsTag,
+      popup: t.hsPopup
+    },
+    {
+      coords: [114.3, 10.0],
+      name: t.tsName,
+      tag: t.tsTag,
+      popup: t.tsPopup
+    }
+  ];
+
+  territories.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'vietnam-sovereignty-badge';
+    el.title = item.popup;
+    el.innerHTML = `
+      <div class="vietnam-flag-icon">
+        <svg viewBox="0 0 30 20" width="100%" height="100%" style="display:block;">
+          <rect width="30" height="20" fill="#DA251D"/>
+          <polygon points="15,3.8 16.5,8.8 21.7,8.8 17.5,11.8 19.1,16.5 15,13.5 10.9,16.5 12.5,11.8 8.3,8.8 13.5,8.8" fill="#FFFF00"/>
+        </svg>
+      </div>
+      <div class="sovereignty-text">
+        <span class="sovereignty-name">${item.name}</span>
+        <span class="sovereignty-tag">(${item.tag})</span>
+      </div>
+    `;
+
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      showToast(item.popup);
+    });
+
+    const marker = new maplibregl.Marker({ element: el, anchor: 'center' })
+      .setLngLat(item.coords)
+      .addTo(map);
+
+    sovereigntyMarkers.push(marker);
+  });
+
+  // 2. Nhãn Biển Đông
+  const seaEl = document.createElement('div');
+  seaEl.className = 'sea-label-marker';
+  seaEl.textContent = t.seaName;
+  const seaMarker = new maplibregl.Marker({ element: seaEl, anchor: 'center' })
+    .setLngLat([113.8, 13.5])
+    .addTo(map);
+  sovereigntyMarkers.push(seaMarker);
+
+  // 3. Các đảo và rạn san hô tiêu biểu
+  const keyIslands = [
+    { coords: [111.605, 16.533], name: currentLang === 'vi' ? 'Đảo Hoàng Sa' : 'Hoang Sa Island' },
+    { coords: [112.336, 16.833], name: currentLang === 'vi' ? 'Đảo Phú Lâm' : 'Phu Lam Island' },
+    { coords: [111.203, 15.783], name: currentLang === 'vi' ? 'Đảo Tri Tôn' : 'Tri Ton Island' },
+    { coords: [111.919, 8.644], name: currentLang === 'vi' ? 'Đảo Trường Sa Lớn' : 'Truong Sa Lon Island' },
+    { coords: [114.364, 10.181], name: currentLang === 'vi' ? 'Đảo Nam Yết' : 'Nam Yet Island' },
+    { coords: [114.321, 9.883], name: currentLang === 'vi' ? 'Đảo Sinh Tồn' : 'Sin Cowe Island' },
+    { coords: [114.330, 11.428], name: currentLang === 'vi' ? 'Đảo Song Tử Tây' : 'Song Tu Tay Island' },
+    { coords: [114.364, 10.375], name: currentLang === 'vi' ? 'Đảo Ba Bình' : 'Ba Binh Island' },
+    { coords: [112.895, 7.893], name: currentLang === 'vi' ? 'Đảo An Bang' : 'An Bang Island' }
+  ];
+
+  keyIslands.forEach(isl => {
+    const islEl = document.createElement('div');
+    islEl.className = 'island-pin-marker';
+    islEl.title = `${isl.name} (${t.hsTag})`;
+    islEl.innerHTML = `
+      <div class="island-pin-dot"></div>
+      <div class="island-pin-label">${isl.name}</div>
+    `;
+    islEl.addEventListener('click', (e) => {
+      e.stopPropagation();
+      showToast(`${isl.name} (${t.hsTag})`);
+    });
+    const islMarker = new maplibregl.Marker({ element: islEl, anchor: 'center' })
+      .setLngLat(isl.coords)
+      .addTo(map);
+    sovereigntyMarkers.push(islMarker);
+  });
+}
 
 // ============================================================
 // STYLES BẢN ĐỒ AN TOÀN (LOẠI BỎ TRIỆT ĐỂ LỖI 403 TỪ OPENSTREETMAP)
@@ -863,8 +1313,14 @@ function ensureRouteLayers() {
   return true;
 }
 
-map.on('load', ensureRouteLayers);
-map.on('styledata', ensureRouteLayers);
+map.on('load', () => {
+  ensureRouteLayers();
+  setupSovereigntyMarkers();
+});
+map.on('styledata', () => {
+  ensureRouteLayers();
+  setupSovereigntyMarkers();
+});
 
 // ============================================================
 // HỆ THỐNG ĐIỀU HƯỚNG & NỘI SUY
@@ -1197,12 +1653,12 @@ function applyRouteData(routeData) {
 
   statTotalKmEl.textContent = totalKm.toFixed(1);
   sumKmEl.textContent = totalKm.toFixed(1);
-  subEl.textContent = `${N} địa điểm — ${currentRouteMode === 'nav' ? 'đường xe chạy thực tế' : 'đường chim bay trực tiếp'}.`;
+  subEl.textContent = I18N[currentLang].subPoints.replace('{n}', N).replace('{mode}', currentRouteMode === 'nav' ? I18N[currentLang].modeNavText : I18N[currentLang].modeDirectText);
   setProgress(progress);
 }
 
 async function buildJourney(points, sourceLabel) {
-  showLoading('đang thiết lập lộ trình 3D…');
+  showLoading(I18N[currentLang].loadingRoute);
 
   if (!map.isStyleLoaded()) {
     await new Promise(resolve => map.once('load', resolve));
@@ -1285,9 +1741,9 @@ async function buildJourney(points, sourceLabel) {
       <div class="l-item-meta">
         <span>
           ${fmtCoord(p)} 
-          <a href="https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lon}" target="_blank" class="gmap-link" title="Mở trên Google Maps" onclick="event.stopPropagation()">🗺️ Google Map</a>
+          <a href="https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lon}" target="_blank" class="gmap-link" title="${I18N[currentLang].openGmap}" onclick="event.stopPropagation()">🗺️ ${I18N[currentLang].openGmap}</a>
         </span>
-        ${i > 0 ? `<span class="l-item-dist">+ ${segDist[i].toFixed(2)} km</span>` : `<span class="l-item-dist" style="background:transparent;color:var(--muted)">Bắt đầu</span>`}
+        ${i > 0 ? `<span class="l-item-dist">+ ${segDist[i].toFixed(2)} km</span>` : `<span class="l-item-dist" style="background:transparent;color:var(--muted)">${I18N[currentLang].startPoint}</span>`}
       </div>
     `;
     lItem.addEventListener('click', () => { 
@@ -1334,7 +1790,7 @@ async function buildJourney(points, sourceLabel) {
   scrub.max = Math.max(0.001, N - 1); 
   scrub.step = 0.001;
 
-  titleEl.textContent = sourceLabel || 'Hành Trình Yêu Thương';
+  titleEl.textContent = sourceLabel || I18N[currentLang].headerTitle;
   statCountEl.textContent = N;
   statTraveledEl.textContent = '0.0';
   statPercentEl.textContent = '0%';
@@ -1393,7 +1849,7 @@ function updateFeaturedUI() {
 
   const mainRow = document.createElement('div');
   mainRow.className = 'legend-row';
-  mainRow.innerHTML = `<span class="dot" style="background:#2196F3;color:#2196F3"></span>Tổng số điểm đã lưu<b>${N}</b>`;
+  mainRow.innerHTML = `<span class="dot" style="background:#2196F3;color:#2196F3"></span>${I18N[currentLang].legendTotal}<b>${N}</b>`;
   legendEl.appendChild(mainRow);
   
   selectedFeatured.forEach(idx => {
@@ -1417,7 +1873,7 @@ function updateFeaturedUI() {
     
     const distRow = document.createElement('div');
     distRow.className = 'legend-home-dist';
-    distRow.textContent = 'Khoảng cách ≈ ' + dist.toFixed(2) + ' km';
+    distRow.textContent = I18N[currentLang].legendDist + dist.toFixed(2) + ' km';
     legendEl.appendChild(distRow);
 
     sumHomeAEl.textContent = p1.name;
@@ -1558,15 +2014,15 @@ function setProgress(v) {
 
   if (nearest > 0) {
     stopdelta.style.display = 'flex';
-    deltatext.textContent = segDist[nearest].toFixed(2) + ' km từ điểm trước';
-    cumtext.textContent = 'Đã đi ' + distanceKm.toFixed(1) + ' / ' + totalKm.toFixed(1) + ' km';
+    deltatext.textContent = I18N[currentLang].deltaFromPrev.replace('{dist}', segDist[nearest].toFixed(2));
+    cumtext.textContent = I18N[currentLang].traveledDist.replace('{traveled}', distanceKm.toFixed(1)).replace('{total}', totalKm.toFixed(1));
   } else {
     stopdelta.style.display = 'none';
-    cumtext.textContent = 'Điểm khởi hành';
+    cumtext.textContent = I18N[currentLang].startStopText;
   }
 
   const isFeat = selectedFeatured.includes(nearest);
-  featToggleBtn.textContent = isFeat ? "❌ Hủy điểm quan trọng" : "📍 Đặt làm điểm quan trọng (Max 2)";
+  featToggleBtn.textContent = isFeat ? I18N[currentLang].featBtnUnset : I18N[currentLang].featBtnSet;
   featToggleBtn.classList.toggle('active', isFeat);
 
   Array.from(ticksEl.children).forEach((el, i) => el.classList.toggle('active', i === nearest));
@@ -1600,7 +2056,7 @@ function switchMode(targetMode) {
     const route = (currentRouteMode === 'nav' ? cachedNavRoute : cachedDirectRoute);
     if (route) {
       applyRouteData(route);
-      showToast(`Đã chuyển: ${currentRouteMode === 'nav' ? 'Xe chạy' : 'Chim bay'}`);
+      showToast(I18N[currentLang].toastSwitchedMode.replace('{mode}', currentRouteMode === 'nav' ? I18N[currentLang].btnModeNav : I18N[currentLang].btnModeDirect));
     }
   }
 }
@@ -1759,11 +2215,11 @@ document.getElementById('welcomeUpload').addEventListener('click', ()=>{
 uploadbtn.addEventListener('click', ()=> fileinput.click());
 
 async function handleFile(file){
-  showLoading('đang đọc ' + file.name + '…');
+  showLoading(I18N[currentLang].loadingFile + file.name + '…');
   try{
     const points = await parseMapFile(file);
     await buildJourney(points, file.name.replace(/\.(kml|kmz)$/i,''));
-    showToast('Đã nạp ' + points.length + ' điểm thành công!');
+    showToast(I18N[currentLang].toastLoadedPoints.replace('{n}', points.length));
   }catch(err){
     console.error(err);
     showToast(err.message || 'Lỗi khi mở file này.');
@@ -1824,13 +2280,13 @@ btnApplyLayer.addEventListener('click', () => {
       localStorage.setItem('user_mapbox_token', t);
       userMapboxToken = t;
     } else {
-      showToast('Vui lòng nhập Mapbox Access Token.');
+      showToast(I18N[currentLang].toastNeedToken);
       return;
     }
   }
 
   layerModal.classList.remove('show');
-  showLoading('đang chuyển kiểu bản đồ…');
+  showLoading(I18N[currentLang].loadingLayer);
   map.setStyle(getActiveStyle());
   setTimeout(() => {
     ensureRouteLayers();
@@ -1870,9 +2326,9 @@ shotbtn.addEventListener('click', () => {
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     flashEl.style.opacity = 1;
     setTimeout(()=>{ flashEl.style.opacity = 0; }, 90);
-    showToast('Đã lưu ảnh khung cảnh!');
+    showToast(I18N[currentLang].toastSavedScreenshot);
   } catch (err) {
-    showToast('Trình duyệt chưa hỗ trợ lưu ảnh canvas.');
+    showToast(I18N[currentLang].toastScreenshotError);
   }
 });
 
@@ -1979,11 +2435,11 @@ btnPlayMusic.addEventListener('click', () => {
   } 
   else if (selected === 'custom') {
     const url = customUrlInput.value.trim();
-    if(!url) { showToast('Bạn chưa nhập link nhạc!'); musicbtn.classList.remove('playing'); return; }
+    if(!url) { showToast(I18N[currentLang].toastNoUrl); musicbtn.classList.remove('playing'); return; }
     
     const ytId = extractYTId(url);
     if(ytId) {
-      showToast('Đang kết nối YouTube...');
+      showToast(I18N[currentLang].toastConnectingYt);
       if (ytPlayer) {
         ytPlayer.loadVideoById(ytId);
         musicPlaying = true;
@@ -1994,7 +2450,7 @@ btnPlayMusic.addEventListener('click', () => {
           events: {
             'onReady': (event) => { event.target.playVideo(); musicPlaying = true; },
             'onError': () => { 
-              showToast("Video này không cho phép nhúng ngoài YouTube."); 
+              showToast(I18N[currentLang].toastYtBlocked); 
               musicbtn.classList.remove('playing');
               musicPlaying = false;
             }
@@ -2004,7 +2460,7 @@ btnPlayMusic.addEventListener('click', () => {
     } else {
       globalAudio.src = url;
       globalAudio.play().catch(() => {
-        showToast("Không thể phát Link MP3 này.");
+        showToast(I18N[currentLang].toastMp3Error);
         musicbtn.classList.remove('playing');
       });
       musicPlaying = true;
@@ -2028,6 +2484,186 @@ window.addEventListener('keydown', e=>{
   else if(e.code === 'KeyF'){ toggleFullscreen(); }
   else if(e.code === 'KeyM'){ document.getElementById('musicbtn').click(); }
 });
+
+// ============================================================
+// ĐIỀU HƯỚNG NGÔN NGỮ & GIAO DIỆN
+// ============================================================
+const langbtn = document.getElementById('langbtn');
+const langFlagContainer = document.getElementById('langFlagContainer');
+const welcomeSample = document.getElementById('welcomeSample');
+
+function applyLanguage(lang) {
+  currentLang = lang;
+  localStorage.setItem('app_lang', lang);
+  document.documentElement.lang = lang;
+  const t = I18N[lang];
+
+  document.title = t.pageTitle;
+
+  // Cập nhật icon cờ và tooltip
+  if (langFlagContainer) {
+    langFlagContainer.innerHTML = getFlagSvg(lang);
+  }
+  if (langbtn) {
+    langbtn.title = t.langBtnTitle;
+  }
+
+  // Welcome modal
+  if (welcomeEl) {
+    const welcomeH2 = welcomeEl.querySelector('h2');
+    if (welcomeH2) welcomeH2.textContent = t.welcomeTitle;
+    const welcomeP = welcomeEl.querySelector('p');
+    if (welcomeP) welcomeP.innerHTML = t.welcomeDesc;
+  }
+  const welcomeUploadBtn = document.getElementById('welcomeUpload');
+  if (welcomeUploadBtn) welcomeUploadBtn.textContent = t.welcomeUploadBtn;
+  if (welcomeSample) welcomeSample.textContent = t.welcomeSampleBtn;
+
+  // Header
+  if (!rawPts.length) {
+    titleEl.textContent = t.headerTitle;
+    subEl.textContent = t.headerSubDefault;
+  } else {
+    subEl.textContent = t.subPoints.replace('{n}', N).replace('{mode}', currentRouteMode === 'nav' ? t.modeNavText : t.modeDirectText);
+  }
+
+  // Stat chips keys
+  const statChips = document.querySelectorAll('#statbar .stat-chip .k');
+  if (statChips.length >= 4) {
+    statChips[0].textContent = t.statStops;
+    statChips[1].textContent = t.statTotalKm;
+    statChips[2].textContent = t.statTraveledKm;
+    statChips[3].textContent = t.statProgress;
+  }
+
+  // Mode switcher
+  if (btnModeNav) btnModeNav.textContent = t.btnModeNav;
+  if (btnModeDirect) btnModeDirect.textContent = t.btnModeDirect;
+  if (modeSwitchWrap) modeSwitchWrap.title = t.modeSwitchTitle;
+
+  // Action buttons
+  if (uploadbtn) {
+    uploadbtn.title = t.uploadBtnTitle;
+    const lbl = uploadbtn.querySelector('.label');
+    if (lbl) lbl.textContent = t.uploadBtnText;
+  }
+  if (layerbtn) layerbtn.title = t.layerBtnTitle;
+  if (listbtn) listbtn.title = t.listBtnTitle;
+  if (musicbtn) musicbtn.title = t.musicBtnTitle;
+  if (shotbtn) shotbtn.title = t.shotBtnTitle;
+  if (fsbtn) fsbtn.title = t.fsBtnTitle;
+
+  // Floating controls
+  const btnZoomIn = document.getElementById('btnZoomIn');
+  if (btnZoomIn) btnZoomIn.title = t.zoomInTitle;
+  const btnZoomOut = document.getElementById('btnZoomOut');
+  if (btnZoomOut) btnZoomOut.title = t.zoomOutTitle;
+  const btnRecenter = document.getElementById('btnRecenter');
+  if (btnRecenter) btnRecenter.title = t.recenterTitle;
+  const compassEl = document.getElementById('compass');
+  if (compassEl) compassEl.title = t.compassTitle;
+
+  // Timeline controls
+  const prevbtn = document.getElementById('prevbtn');
+  if (prevbtn) prevbtn.title = t.prevBtnTitle;
+  const nextbtn = document.getElementById('nextbtn');
+  if (nextbtn) nextbtn.title = t.nextBtnTitle;
+  if (playbtn) playbtn.setAttribute('aria-label', playing ? t.pauseBtnLabel : t.playBtnLabel);
+
+  // Stop card button
+  if (featToggleBtn) {
+    const activeIdx = Math.round(progress);
+    const isFeat = selectedFeatured.includes(activeIdx);
+    featToggleBtn.textContent = isFeat ? t.featBtnUnset : t.featBtnSet;
+  }
+
+  // Modals
+  const layerBoxH3 = document.querySelector('#layerBox h3');
+  if (layerBoxH3) layerBoxH3.textContent = t.layerTitle;
+  const layerLabels = document.querySelectorAll('#layerBox .layer-label');
+  if (layerLabels.length >= 4) {
+    layerLabels[0].innerHTML = `<input type="radio" name="maplayer" value="carto"> ${t.layerCarto}`;
+    layerLabels[1].innerHTML = `<input type="radio" name="maplayer" value="google"> ${t.layerGoogle}`;
+    layerLabels[2].innerHTML = `<input type="radio" name="maplayer" value="osm"> ${t.layerOsm}`;
+    layerLabels[3].innerHTML = `<input type="radio" name="maplayer" value="mapbox"> ${t.layerMapbox}`;
+    const currRadio = document.querySelector(`input[name="maplayer"][value="${currentLayerType}"]`);
+    if (currRadio) currRadio.checked = true;
+  }
+  if (btnApplyLayer) btnApplyLayer.textContent = t.layerApply;
+  if (btnCloseLayer) btnCloseLayer.textContent = t.layerClose;
+
+  const musicBoxH3 = document.querySelector('#musicBox h3');
+  if (musicBoxH3) musicBoxH3.textContent = t.musicTitle;
+  const trackLabels = document.querySelectorAll('#musicBox .track-label');
+  if (trackLabels.length >= 4) {
+    const currentTrackVal = (document.querySelector('input[name="mtrack"]:checked') || {}).value || 'tone';
+    trackLabels[0].innerHTML = `<input type="radio" name="mtrack" value="tone"> ${t.musicTone}`;
+    trackLabels[1].innerHTML = `<input type="radio" name="mtrack" value="chill"> ${t.musicChill}`;
+    trackLabels[2].innerHTML = `<input type="radio" name="mtrack" value="piano"> ${t.musicPiano}`;
+    trackLabels[3].innerHTML = `<input type="radio" name="mtrack" value="custom"> ${t.musicCustom}`;
+    const trackRadio = document.querySelector(`input[name="mtrack"][value="${currentTrackVal}"]`);
+    if (trackRadio) trackRadio.checked = true;
+  }
+  if (btnPlayMusic) btnPlayMusic.textContent = t.musicPlay;
+  if (btnStopMusic) btnStopMusic.textContent = t.musicStop;
+  if (btnCloseMusic) btnCloseMusic.textContent = t.musicClose;
+  if (customUrlInput) customUrlInput.placeholder = t.musicCustomPlaceholder;
+
+  const listHeaderH3 = document.querySelector('#listPanel .list-header h3');
+  if (listHeaderH3) listHeaderH3.textContent = t.listTitle;
+
+  const sumTitle = document.querySelector('#summary .stitle');
+  if (sumTitle) sumTitle.textContent = t.sumTitle;
+  const sumStatsDivs = document.querySelectorAll('#summary .sstats div');
+  if (sumStatsDivs.length >= 2) {
+    sumStatsDivs[0].querySelector('span').textContent = t.sumStops;
+    sumStatsDivs[1].querySelector('span').textContent = t.sumKm;
+  }
+  const replaybtn = document.getElementById('replaybtn');
+  if (replaybtn) replaybtn.textContent = t.replayBtn;
+
+  // Cập nhật lại các nhãn thời gian thực nếu đang có dữ liệu
+  if (rawPts.length > 0) {
+    updateFeaturedUI();
+    setProgress(progress);
+  }
+
+  // Cập nhật nhãn chủ quyền biển đảo
+  setupSovereigntyMarkers();
+}
+
+function toggleLanguage() {
+  currentLang = currentLang === 'vi' ? 'en' : 'vi';
+  if (langbtn) langbtn.classList.add('anim');
+  setTimeout(() => {
+    applyLanguage(currentLang);
+    if (langbtn) langbtn.classList.remove('anim');
+    showToast(I18N[currentLang].toastSwitchedLang);
+  }, 120);
+}
+
+async function loadSampleJourney() {
+  welcomeEl.classList.add('hide');
+  showLoading(I18N[currentLang].loadingRoute);
+  try {
+    const label = currentLang === 'vi' ? I18N.vi.sampleJourneyTitle : I18N.en.sampleJourneyTitle;
+    await buildJourney(SAMPLE_VIETNAM_JOURNEY, label);
+    showToast(I18N[currentLang].toastLoadedPoints.replace('{n}', SAMPLE_VIETNAM_JOURNEY.length));
+  } catch (err) {
+    console.error(err);
+    showToast(err.message || 'Error loading sample route');
+    hideLoading();
+  }
+}
+
+if (langbtn) {
+  langbtn.addEventListener('click', toggleLanguage);
+}
+if (welcomeSample) {
+  welcomeSample.addEventListener('click', loadSampleJourney);
+}
+
+applyLanguage(currentLang);
 
 })();
 </script>
