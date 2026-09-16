@@ -31,7 +31,13 @@
 - La bàn (Compass) tự động quay theo hướng nhìn thực tế và hỗ trợ click để đưa bản đồ quay về hướng Bắc.
 - Cụm nút phóng to (+) và thu nhỏ (-) trực quan ngay trên giao diện.
 
-### 4. Phân tích dữ liệu và thống kê
+### 4. Hiệu ứng thị giác & Pháo hoa chào mừng (Visual Effects & Celebration)
+- **Hiệu ứng trái tim thở (Elastic Heartbeat Pop)**: Khi chạm đến bất kỳ trạm dừng nào, biểu tượng trái tim tự động phóng to lên ~220%, tỏa hào quang neon kép (Rose Pink & Gold) cùng sóng xung kích (Shockwave) lan tỏa.
+- **Pháo hoa hạt ánh sáng hiện đại (Canvas Particle Fireworks)**: Động cơ Canvas 2D phần cứng 60fps bắn chùm pháo hoa rực rỡ từ tâm trái tim với 4 loại hạt ánh sáng (tia sáng streamer, ngôi sao 4 cánh xoay ✨, trái tim mini ❤️, và bụi vàng lấp lánh), kết hợp hòa trộn quang học `lighter` siêu thực.
+- **Pháo hoa kết thúc hành trình (Grand Finale)**: Tự động kích hoạt màn bắn pháo hoa 3 đợt liên hoàn khi đến điểm đích cuối cùng.
+- **Đồng bộ hóa Marker địa điểm**: Marker trạm dừng trên bản đồ cũng đồng thời phát xung nhịp hào quang khi trái tim chạm mốc.
+
+### 5. Phân tích dữ liệu và thống kê
 - **Thanh thông số thời gian thực (Stat Bar)**:
   - Tổng số lượng địa điểm trong hành trình.
   - Tổng quãng đường của toàn bộ chuyến đi (km).
@@ -40,28 +46,27 @@
 - **Thẻ thông tin chi tiết (Stop Card)**:
   - Thứ tự điểm, tên địa điểm và tọa độ GPS (kinh độ, vĩ độ).
   - Khoảng cách giữa hai điểm liên tiếp (km) và khoảng cách tích lũy.
-  - Tích hợp nút mở nhanh tọa độ trạm dừng hiện tại trực tiếp trên Google Maps.
 - **Điểm mốc quan trọng (Featured Points)**:
   - Cho phép ghim tối đa 2 điểm đặc biệt để đo khoảng cách chim bay trực tiếp giữa hai mốc này.
 - **Tổng kết hành trình (Journey Summary)**:
   - Tự động hiển thị bảng thông tin tổng kết khi chuyến đi kết thúc và cung cấp nút xem lại từ đầu.
 
-### 5. Quản lý danh sách địa điểm (Sidebar Panel)
+### 6. Quản lý danh sách địa điểm (Sidebar Panel)
 - Liệt kê toàn bộ các điểm đến theo đúng thứ tự hành trình kèm khoảng cách chặng.
 - Click vào điểm bất kỳ để di chuyển camera tức thì tới vị trí đó.
 - Tích hợp nút mở nhanh tọa độ trực tiếp trên Google Maps.
 
-### 6. Hệ thống âm thanh nền đa dạng
+### 7. Hệ thống âm thanh nền đa dạng
 - **Tone.js**: Tự động sinh hợp âm thư giãn, êm dịu theo phong cách Lofi Ambient.
 - **Lofi Chill & Piano**: Các bản nhạc mẫu tích hợp sẵn.
 - **Phát nhạc theo liên kết**: Hỗ trợ nhập link video YouTube (chạy ngầm thông qua YouTube IFrame Player API) hoặc đường dẫn trực tiếp tới file `.mp3`.
 
-### 7. Hỗ trợ song ngữ (Tiếng Việt & English)
+### 8. Hỗ trợ song ngữ (Tiếng Việt & English)
 - Nút chuyển ngôn ngữ hình lá cờ (🇻🇳 / 🇬🇧) ngay trên thanh điều khiển.
 - Chuyển đổi toàn diện toàn bộ giao diện: tiêu đề, mô tả, thanh thông số, chú thích, hộp thoại nhạc, tùy chọn bản đồ, thông báo toast và các nhãn địa lý.
 - Tự động lưu tùy chọn ngôn ngữ vào trình duyệt (localStorage).
 
-### 8. Tiện ích bổ sung & Lộ trình mẫu
+### 9. Tiện ích bổ sung & Lộ trình mẫu
 - **Khẳng định chủ quyền biển đảo**: Đánh dấu trực quan Quần đảo Hoàng Sa, Quần đảo Trường Sa, Biển Đông và các đảo tiêu biểu thuộc chủ quyền Việt Nam.
 - **Lộ trình mẫu Xuyên Việt**: Tích hợp sẵn nút trải nghiệm nhanh hành trình 9 danh lam thắng cảnh dọc Việt Nam mà không cần chuẩn bị trước tệp KML.
 - Chụp ảnh khung cảnh (Screenshot): Xuất góc nhìn 3D hiện tại thành tệp ảnh `.png` sắc nét.
@@ -131,6 +136,7 @@ Dự án hoạt động hoàn toàn ở phía trình duyệt (Client-side 100%),
   - Tinh chỉnh bố cục CSS Responsive cho màn hình di động nhỏ (<390px).
 
 ### Phiên bản 1.2
+- **Hiệu ứng Trái tim phóng to & Pháo hoa hạt ánh sáng**: Khi icon trái tim di chuyển tới bất kỳ mốc điểm dừng nào, biểu tượng tim sẽ phóng to rực rỡ với nhịp đập đôi (Elastic Heartbeat Pop ~220%), phát sóng xung kích (Shockwave) kèm màn bắn pháo hoa hạt ánh sáng đa sắc (Canvas Particle Fireworks 60fps) từ tâm trái tim. Tự động kích hoạt màn pháo hoa đại tiệc (Grand Finale) 3 đợt khi kết thúc hành trình.
 - **Hỗ trợ song ngữ (VI / EN)**: Nút chuyển đổi ngôn ngữ cờ (Việt Nam 🇻🇳 / UK 🇬🇧) chuyển đổi toàn diện toàn bộ nhãn, thông số, giao diện.
 - **Bổ sung lộ trình mẫu**: Nút trải nghiệm nhanh hành trình danh thắng xuyên Việt mà không cần chuẩn bị tệp KML.
 
