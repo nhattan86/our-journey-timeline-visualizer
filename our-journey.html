@@ -1586,7 +1586,7 @@ function computeTilesForRoute(coords, zoom, bufferTiles = 1) {
   return Array.from(tileMap.values());
 }
 
-function getLookAheadCoord(currentCoord, bearingDeg, distanceMeters = 75) {
+function getBearingAheadCoord(currentCoord, bearingDeg, distanceMeters = 75) {
   if (!currentCoord) return [0, 0];
   const [lon, lat] = currentCoord;
   const rad = ((bearingDeg || 0) * Math.PI) / 180;
@@ -1671,7 +1671,7 @@ class TilePreloader {
   }
   prefetchAhead(currentCoord, bearingDeg, distanceMeters = 1200, zoom = 14) {
     if (!currentCoord) return;
-    const ahead = getLookAheadCoord(currentCoord, bearingDeg, distanceMeters);
+    const ahead = getBearingAheadCoord(currentCoord, bearingDeg, distanceMeters);
     computeTilesForRoute([currentCoord, ahead], zoom, 1).forEach(t => {
       if (!this.cachedTileKeys.has(t.key) && !this.inFlightKeys.has(t.key)) {
         this.queue.unshift({ ...t, priority: 150 });
@@ -2611,23 +2611,27 @@ function getExactPositionAtProgress(prog) {
 }
 
 function getLookAheadCoord(currentCoord, segIdx, leadMeters = 80) {
-  if (!routeCoords.length) return currentCoord;
+  if (!routeCoords || !routeCoords.length) return currentCoord;
+  const safeIdx = Math.max(0, Math.min(routeCoords.length - 2, Math.floor(segIdx) || 0));
   let accumulated = 0;
   let leadPos = currentCoord;
 
-  for (let j = segIdx; j < routeCoords.length - 1; j++) {
-    const d = haversineKm(routeCoords[j][1], routeCoords[j][0], routeCoords[j+1][1], routeCoords[j+1][0]) * 1000;
+  for (let j = safeIdx; j < routeCoords.length - 1; j++) {
+    const p1 = routeCoords[j];
+    const p2 = routeCoords[j + 1];
+    if (!p1 || !p2) break;
+    const d = haversineKm(p1[1], p1[0], p2[1], p2[0]) * 1000;
     if (accumulated + d >= leadMeters) {
       const rem = leadMeters - accumulated;
       const frac = d > 0 ? rem / d : 0;
       leadPos = [
-        routeCoords[j][0] + (routeCoords[j+1][0] - routeCoords[j][0]) * frac,
-        routeCoords[j][1] + (routeCoords[j+1][1] - routeCoords[j][1]) * frac
+        p1[0] + (p2[0] - p1[0]) * frac,
+        p1[1] + (p2[1] - p1[1]) * frac
       ];
       break;
     }
     accumulated += d;
-    leadPos = routeCoords[j+1];
+    leadPos = p2;
   }
   return leadPos;
 }
@@ -2851,6 +2855,7 @@ document.getElementById('prevbtn').addEventListener('click', prevStop);
 document.getElementById('nextbtn').addEventListener('click', nextStop);
 
 let lastTime = performance.now();
+let lastTilePrefetch = 0;
 function loop(now){
   requestAnimationFrame(loop);
   const dt = Math.min(0.05, (now - lastTime) / 1000);
@@ -2868,7 +2873,11 @@ function loop(now){
 
     if (desiredCamPos && now - lastTilePrefetch > 1200) {
       lastTilePrefetch = now;
-      tilePreloader.prefetchAhead(desiredCamPos, -map.getBearing(), 1200, 14);
+      try {
+        tilePreloader.prefetchAhead(desiredCamPos, -map.getBearing(), 1200, 14);
+      } catch (e) {
+        console.warn('Tile prefetch warning:', e);
+      }
     }
   }
 
@@ -2877,11 +2886,14 @@ function loop(now){
     const curr = map.getCenter();
     const dLng = desiredCamPos[0] - curr.lng;
     const dLat = desiredCamPos[1] - curr.lat;
+    const distSq = dLng * dLng + dLat * dLat;
 
-    if (Math.abs(dLng) > 0.000008 || Math.abs(dLat) > 0.000008) {
+    if (distSq > 0.04) {
+      map.setCenter(desiredCamPos);
+    } else if (distSq > 0.00000001) {
       map.setCenter([
-        curr.lng + dLng * 0.12,
-        curr.lat + dLat * 0.12
+        curr.lng + dLng * 0.18,
+        curr.lat + dLat * 0.18
       ]);
     }
   }
