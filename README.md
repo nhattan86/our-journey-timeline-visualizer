@@ -171,3 +171,9 @@ our-journey-timeline-visualizer/
 ## Giấy Phép (License)
 
 Dự án được phát hành theo giấy phép mã nguồn mở **MIT License**.
+
+---
+
+<h3 align="center">
+  <i>built with love by nhattan ❤️</i>
+</h3>

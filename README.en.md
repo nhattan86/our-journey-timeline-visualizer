@@ -172,3 +172,9 @@ our-journey-timeline-visualizer/
 ## License
 
 This project is licensed under the open-source **MIT License**.
+
+---
+
+<h3 align="center">
+  <i>built with love by nhattan ❤️</i>
+</h3>
