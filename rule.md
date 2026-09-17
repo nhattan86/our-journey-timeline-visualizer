@@ -93,8 +93,10 @@ Truoc khi ban giao cong viec va day ma nguon len GitHub:
 2. **Cam ket Commit Day Du (Commit Everything):**
    - Bat buoc thuc hien `git add -A` de dua toan bo cac tep sua doi va tep moi vao staging area.
    - Khong de sot bat ky tep untracked hay thay doi dang do nao truoc khi push.
-3. **Thuc thi Deploy:**
-   - Chay `make deploy` de thuc hien chuoi hanh dong tu dong: Test -> Build -> Stage All -> Commit -> Push `origin main`.
+3. **Ngon Ngu Commit Message:**
+   - Thong diep commit bat buoc phai viet bang tieng Anh ro rang, chuyen nghiep (uu tien format Conventional Commits nhu `feat: ...`, `fix: ...`, `docs: ...`).
+4. **Thuc thi Deploy:**
+   - Chay `make deploy` de thuc hien chuoi hanh dong tu dong: Test -> Build -> Stage All -> Commit bang tieng Anh -> Push `origin main`.
    - Xac nhan kho luu tru GitHub da nhan day du commit moi nhat.
 
 ---

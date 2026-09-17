@@ -22,7 +22,8 @@ Please strictly follow the rules defined in `rule.md` at the workspace root:
 4. **AUTOMATED DEPLOYMENT PROTOCOL (MAKE DEPLOY):**
    - Always run `make test` and `make build` before deploying.
    - Stage ALL modified and untracked files (`git add -A`) before committing.
-   - Commit and push to `origin main` cleanly using `make deploy`.
+   - Commit messages must always be in English (e.g. Conventional Commits: `feat: ...`, `fix: ...`, `docs: ...`).
+   - Push to `origin main` cleanly using `make deploy`.
 
 5. **PRESERVE CORRECT BUSINESS LOGIC:**
    - Never break or delete existing correct business logic (Routing modes Nav/Direct, Sovereignty markers for Hoang Sa & Truong Sa & Bien Dong, Sample Vietnam journey, Audio Tone.js/YouTube, bilingual VI/EN).

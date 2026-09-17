@@ -4,7 +4,7 @@
 # ==============================================================================
 
 SHELL := cmd.exe
-COMMIT_MSG ?= Trien khai ung dung len GitHub Pages: phien ban san sang san xuat
+COMMIT_MSG ?= Deploy to GitHub Pages: production release and documentation update
 
 .PHONY: all test build status deploy clean help
 
