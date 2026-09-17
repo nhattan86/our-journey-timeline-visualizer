@@ -1,13 +1,13 @@
 # Hành Trình Yêu Thương (Our Journey - Timeline Visualizer)
 
-![Phiên Bản](https://img.shields.io/badge/version-2.0.0-brightgreen?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-2.0.0-brightgreen?style=for-the-badge)
 ![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
 ![MapLibre GL](https://img.shields.io/badge/MapLibre_GL-5.2.0-blue?style=for-the-badge)
 ![Tone.js](https://img.shields.io/badge/Tone.js-15.0.4-orange?style=for-the-badge)
-![Kiểm Thử](https://img.shields.io/badge/Formal_Tests-27%2F27_Passed-success?style=for-the-badge)
-![Triển Khai](https://img.shields.io/badge/GitHub_Pages-Live-success?style=for-the-badge)
+![Test](https://img.shields.io/badge/Formal_Tests-27%2F27_Passed-success?style=for-the-badge)
+![Deploy](https://img.shields.io/badge/GitHub_Pages-Live-success?style=for-the-badge)
 
 Ứng dụng web tương tác trực quan hóa dữ liệu bản đồ `.kml` và `.kmz` thành chuyến đi 3D bám sát từng cung đường thực tế. Dự án được thiết kế theo kiến trúc **Single-Source Standalone Application** tối ưu hóa cho GitHub Pages, tích hợp **Động cơ Tải trước Bản đồ Thông minh (Intelligent Map Tile Preloader)** và hệ thống **Kiểm thử Hình thức (Formal Verification Testing)** đạt tiêu chuẩn 100% Pass.
 
