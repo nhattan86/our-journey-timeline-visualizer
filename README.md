@@ -42,19 +42,6 @@ Nhờ kiến trúc độc lập không phụ thuộc bundler hay node_modules:
 
 ---
 
-### Cách 3: Chạy qua Local Web Server
-Nếu bạn muốn phát triển mã nguồn hoặc kiểm thử qua máy chủ cục bộ:
-```bash
-# Cách A: Sử dụng Python
-python -m http.server 8000
-
-# Cách B: Sử dụng Node npx serve
-npx serve .
-```
-Mở trình duyệt tại địa chỉ `http://localhost:8000/our-journey.html`.
-
----
-
 ## Quy Trình Triển Khai & Tự Động Hóa (Makefile)
 
 Dự án được trang bị `Makefile` chuẩn hóa mọi thao tác kiểm thử, kiểm tra đồng bộ và đẩy code lên GitHub Pages:

@@ -42,19 +42,6 @@ Thanks to the standalone zero-dependency architecture:
 
 ---
 
-### Option 3: Run via Local Web Server
-If you want to develop or run through a local server:
-```bash
-# Option A: Using Python
-python -m http.server 8000
-
-# Option B: Using Node.js serve
-npx serve .
-```
-Open your browser at `http://localhost:8000/our-journey.html`.
-
----
-
 ## Deployment & Automation (Makefile)
 
 The project includes a standard `Makefile` automating verification, builds, and GitHub Pages deployments:
