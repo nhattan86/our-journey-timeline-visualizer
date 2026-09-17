@@ -1,3 +1,8 @@
+<div align="right">
+  <a href="README.md"><img src="https://img.shields.io/badge/Ngôn_Ngữ-Tiếng_Việt-2196F3?style=for-the-badge" alt="Tiếng Việt"></a>
+  <a href="README.en.md"><img src="https://img.shields.io/badge/Language-English-lightgrey?style=for-the-badge" alt="English"></a>
+</div>
+
 # Hành Trình Yêu Thương (Our Journey - Timeline Visualizer)
 
 ![Version](https://img.shields.io/badge/version-2.0.0-brightgreen?style=for-the-badge)
