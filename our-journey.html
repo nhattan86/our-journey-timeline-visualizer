@@ -6,12 +6,12 @@
 <title>Hành Trình Yêu Thương - 3D Map Tracking</title>
 
 <!-- MapLibre GL 3D Engine (Tương thích 100% Mapbox Vector, hoạt động ổn định) -->
-<link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet">
-<script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+<link href="https://unpkg.com/maplibre-gl@5.2.0/dist/maplibre-gl.css" rel="stylesheet">
+<script src="https://unpkg.com/maplibre-gl@5.2.0/dist/maplibre-gl.js"></script>
 
 <!-- Libraries phụ trợ -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+<script src="https://unpkg.com/tone@15.0.4/build/Tone.js"></script>
 <script src="https://www.youtube.com/iframe_api"></script>
 
 <style>
@@ -780,6 +780,43 @@
     color: #DA251D;
     border-color: #DA251D;
   }
+
+.preload-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(232, 106, 147, 0.25);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #C0456E;
+  transition: opacity 0.4s ease;
+}
+.preload-badge.ready {
+  border-color: rgba(46, 125, 50, 0.3);
+  color: #2e7d32;
+}
+.preload-pulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #E86A93;
+  animation: pulseDot 1.4s ease-in-out infinite;
+}
+.preload-badge.ready .preload-pulse {
+  background: #2e7d32;
+  animation: none;
+}
+@keyframes pulseDot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.6); opacity: 0.4; }
+}
+
 </style>
 </head>
 <body>
@@ -788,7 +825,12 @@
 
 <div id="welcome">
   <div class="wbox">
-    <div class="wheart">🧭</div>
+    <div class="wheart">
+      <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" fill="currentColor" fill-opacity="0.25"></polygon>
+      </svg>
+    </div>
     <h2>Hành Trình Yêu Thương</h2>
     <p>Trình chiếu hành trình <b>3D Navigation</b> từ file <b>.kml / .kmz</b> bám sát từng cung đường thực tế.</p>
     <div class="wbtns">
@@ -851,24 +893,34 @@
 <!-- Modal Tổng kết hành trình -->
 <div id="summary">
   <div class="sbox">
-    <div class="sheart">💖</div>
+    <div class="sheart">
+      <svg viewBox="0 0 24 24" width="38" height="38" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="currentColor" fill-opacity="0.18"/>
+      </svg>
+    </div>
     <div class="stitle">Tổng kết hành trình</div>
     <div class="sstats">
       <div><b id="sumCount">0</b><span>địa điểm</span></div>
       <div><b id="sumKm">0</b><span>km lộ trình</span></div>
     </div>
-    <div class="shomes" id="sumHomes">📍 <span id="sumHomeA">—</span> ↔ <span id="sumHomeB">—</span> ≈ <b id="sumHomeKm">—</b> km</div>
-    <button id="replaybtn">↺ Xem lại từ đầu</button>
+    <div class="shomes" id="sumHomes">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span id="sumHomeA">—</span> ↔ <span id="sumHomeB">—</span> ≈ <b id="sumHomeKm">—</b> km
+    </div>
+    <button id="replaybtn"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>Xem lại từ đầu</button>
   </div>
 </div>
 
 <div id="musicOverlay">
   <div id="musicBox">
-    <h3>🎵 Chọn nhạc nền</h3>
+    <h3>
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>Chọn nhạc nền
+    </h3>
     <label class="track-label"><input type="radio" name="mtrack" value="tone" checked> Bản phối tự tạo (Tone.js)</label>
     <label class="track-label"><input type="radio" name="mtrack" value="chill"> Lofi Chill (Mẫu)</label>
     <label class="track-label"><input type="radio" name="mtrack" value="piano"> Piano Nhẹ Nhàng (Mẫu)</label>
-    <label class="track-label"><input type="radio" name="mtrack" value="custom"> 🔗 Nhập link YouTube / MP3 tùy ý</label>
+    <label class="track-label"><input type="radio" name="mtrack" value="custom">
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Nhập link YouTube / MP3 tùy ý
+    </label>
     <input type="text" id="customUrlInput" placeholder="Ví dụ: https://youtu.be/xxx hoặc .mp3">
     
     <div class="music-btns">
@@ -881,7 +933,9 @@
 
 <div id="layerModal">
   <div id="layerBox">
-    <h3>🗺️ Tùy chọn bản đồ</h3>
+    <h3>
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>Tùy chọn bản đồ
+    </h3>
     <label class="layer-label"><input type="radio" name="maplayer" value="carto" checked> <b>Pastel Voyager</b> (Mặc định - Màu hồng dịu)</label>
     <label class="layer-label"><input type="radio" name="maplayer" value="google"> <b>Google Maps</b> (Độ nét cao, tiếng Việt)</label>
     <label class="layer-label"><input type="radio" name="maplayer" value="osm"> <b>ESRI World Street</b> (Bản đồ đường phố quốc tế)</label>
@@ -898,7 +952,7 @@
 <div id="listPanel">
   <div class="list-header">
     <h3>Danh sách địa điểm</h3>
-    <button id="closeListBtn">✕</button>
+    <button id="closeListBtn" aria-label="Đóng"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
   </div>
   <div id="listContent"></div>
 </div>
@@ -919,6 +973,10 @@
         <div class="stat-chip"><span class="v" id="statTotalKm">—</span><span class="k">km tổng</span></div>
         <div class="stat-chip"><span class="v" id="statTraveled">—</span><span class="k">km đã đi</span></div>
         <div class="stat-chip"><span class="v" id="statPercent">—</span><span class="k">hành trình</span></div>
+      </div>
+      <div id="preloadBadge" class="preload-badge" style="display:none;">
+        <span class="preload-pulse"></span>
+        <span id="preloadText">Đang tải trước bản đồ: 0%</span>
       </div>
     </div>
     <div class="headerRight">
@@ -977,7 +1035,7 @@
     </div>
     <div class="cum" id="cumtext"></div>
     <button id="featToggleBtn" class="feat-btn">
-      📍 Đặt làm điểm quan trọng (Max 2)
+      Ghim điểm quan trọng (Tối đa 2)
     </button>
   </div>
 
@@ -1042,8 +1100,8 @@ const I18N = {
     zoomOutTitle: "Thu nhỏ",
     recenterTitle: "Bật/Tắt theo dõi icon tim",
     compassTitle: "Xoay về hướng Bắc",
-    featBtnSet: "📍 Đặt làm điểm quan trọng (Max 2)",
-    featBtnUnset: "✓ Hủy điểm quan trọng",
+    featBtnSet: "Ghim điểm quan trọng (Tối đa 2)",
+    featBtnUnset: "Bỏ ghim điểm quan trọng",
     prevBtnTitle: "Điểm trước (←)",
     nextBtnTitle: "Điểm kế tiếp (→)",
     playBtnLabel: "Phát",
@@ -1058,17 +1116,17 @@ const I18N = {
     sumTitle: "Tổng kết hành trình",
     sumStops: "địa điểm",
     sumKm: "km lộ trình",
-    replayBtn: "↺ Xem lại từ đầu",
-    musicTitle: "🎵 Chọn nhạc nền",
+    replayBtn: "Xem lại từ đầu",
+    musicTitle: "Chọn nhạc nền",
     musicTone: "Bản phối tự tạo (Tone.js)",
     musicChill: "Lofi Chill (Mẫu)",
     musicPiano: "Piano Nhẹ Nhàng (Mẫu)",
-    musicCustom: "🔗 Nhập link YouTube / MP3 tùy ý",
+    musicCustom: "Nhập link YouTube / MP3 tùy ý",
     musicCustomPlaceholder: "Ví dụ: https://youtu.be/xxx hoặc .mp3",
     musicPlay: "Phát nhạc",
     musicStop: "Tắt nhạc",
     musicClose: "Đóng",
-    layerTitle: "🗺️ Tùy chọn bản đồ",
+    layerTitle: "Tùy chọn bản đồ",
     layerCarto: "<b>Pastel Voyager</b> (Mặc định - Màu hồng dịu)",
     layerGoogle: "<b>Google Maps</b> (Độ nét cao, tiếng Việt)",
     layerOsm: "<b>ESRI World Street</b> (Bản đồ đường phố quốc tế)",
@@ -1130,8 +1188,8 @@ const I18N = {
     zoomOutTitle: "Zoom Out",
     recenterTitle: "Toggle follow camera",
     compassTitle: "Reset to North",
-    featBtnSet: "📍 Set as featured point (Max 2)",
-    featBtnUnset: "✓ Remove featured point",
+    featBtnSet: "Set as featured point (Max 2)",
+    featBtnUnset: "Remove featured point",
     prevBtnTitle: "Previous stop (←)",
     nextBtnTitle: "Next stop (→)",
     playBtnLabel: "Play",
@@ -1146,17 +1204,17 @@ const I18N = {
     sumTitle: "Journey Summary",
     sumStops: "locations",
     sumKm: "total km",
-    replayBtn: "↺ Replay from start",
-    musicTitle: "🎵 Background Music",
+    replayBtn: "Replay from start",
+    musicTitle: "Background Music",
     musicTone: "Generative Ambient (Tone.js)",
     musicChill: "Lofi Chill (Sample)",
     musicPiano: "Soft Piano (Sample)",
-    musicCustom: "🔗 Custom YouTube / MP3 link",
+    musicCustom: "Custom YouTube / MP3 link",
     musicCustomPlaceholder: "e.g. https://youtu.be/xxx or .mp3",
     musicPlay: "Play Music",
     musicStop: "Stop Music",
     musicClose: "Close",
-    layerTitle: "🗺️ Map Style Options",
+    layerTitle: "Map Style Options",
     layerCarto: "<b>Pastel Voyager</b> (Default - Soft Pink)",
     layerGoogle: "<b>Google Maps</b> (High Definition)",
     layerOsm: "<b>ESRI World Street</b> (Global Street Map)",
@@ -1496,6 +1554,168 @@ function interpolateRoute(coords, stepMeters = 20) {
   }
   return result;
 }
+
+
+function latLonToTile(lat, lon, zoom) {
+  const clampedLat = Math.max(-85.05112878, Math.min(85.05112878, lat));
+  const clampedLon = Math.max(-180, Math.min(180, lon));
+  const n = 2 ** zoom;
+  const x = Math.floor(((clampedLon + 180) / 360) * n);
+  const latRad = (clampedLat * Math.PI) / 180;
+  const y = Math.floor(((1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2) * n);
+  return { x: Math.max(0, Math.min(n - 1, x)), y: Math.max(0, Math.min(n - 1, y)), z: zoom, key: `${zoom}/${x}/${y}` };
+}
+
+function computeTilesForRoute(coords, zoom, bufferTiles = 1) {
+  if (!Array.isArray(coords) || coords.length === 0) return [];
+  const tileMap = new Map();
+  const maxTile = (2 ** zoom) - 1;
+  for (let i = 0; i < coords.length; i++) {
+    const [lon, lat] = coords[i];
+    const center = latLonToTile(lat, lon, zoom);
+    for (let dx = -bufferTiles; dx <= bufferTiles; dx++) {
+      for (let dy = -bufferTiles; dy <= bufferTiles; dy++) {
+        const tx = center.x + dx, ty = center.y + dy;
+        if (tx >= 0 && tx <= maxTile && ty >= 0 && ty <= maxTile) {
+          const key = `${zoom}/${tx}/${ty}`;
+          if (!tileMap.has(key)) tileMap.set(key, { x: tx, y: ty, z: zoom, key });
+        }
+      }
+    }
+  }
+  return Array.from(tileMap.values());
+}
+
+function getLookAheadCoord(currentCoord, bearingDeg, distanceMeters = 75) {
+  if (!currentCoord) return [0, 0];
+  const [lon, lat] = currentCoord;
+  const rad = ((bearingDeg || 0) * Math.PI) / 180;
+  const dKm = distanceMeters / 1000;
+  const R = 6371.0088;
+  const lat1 = (lat * Math.PI) / 180, lon1 = (lon * Math.PI) / 180;
+  const lat2 = Math.asin(Math.sin(lat1) * Math.cos(dKm / R) + Math.cos(lat1) * Math.sin(dKm / R) * Math.cos(rad));
+  const lon2 = lon1 + Math.atan2(Math.sin(rad) * Math.sin(dKm / R) * Math.cos(lat1), Math.cos(dKm / R) - Math.sin(lat1) * Math.sin(lat2));
+  return [(lon2 * 180) / Math.PI, (lat2 * 180) / Math.PI];
+}
+
+class TilePreloader {
+  constructor(options = {}) {
+    this.maxConcurrency = options.maxConcurrency || 6;
+    this.cachedTileKeys = new Set();
+    this.inFlightKeys = new Set();
+    this.queue = [];
+    this.activeWorkers = 0;
+    this.totalTilesInJob = 0;
+    this.loadedTilesInJob = 0;
+    this.failedTilesInJob = 0;
+    this.onProgressCallback = null;
+  }
+  onProgress(cb) { this.onProgressCallback = cb; }
+  setLayer(layer, token = '') {
+    this.cachedTileKeys.clear();
+    this.inFlightKeys.clear();
+    this.queue = [];
+  }
+  getTileUrl(x, y, z) {
+    if (currentLayerType === 'mapbox' && userMapboxToken) {
+      return `https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/${z}/${x}/${y}?access_token=${userMapboxToken}`;
+    }
+    if (currentLayerType === 'google') {
+      return `https://mt${(x + y) % 4}.google.com/vt/lyrs=m&hl=vi&x=${x}&y=${y}&z=${z}`;
+    }
+    if (currentLayerType === 'osm') {
+      return `https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/${z}/${y}/${x}`;
+    }
+    const sub = ['a', 'b', 'c', 'd'][(x + y) % 4];
+    return `https://${sub}.basemaps.cartocdn.com/rastertiles/voyager/${z}/${x}/${y}@2x.png`;
+  }
+  async preloadRoute(routeCoords, targetZooms = [14]) {
+    const tileMap = new Map();
+    targetZooms.forEach(z => {
+      computeTilesForRoute(routeCoords, z, 1).forEach((t, idx) => {
+        if (!tileMap.has(t.key)) tileMap.set(t.key, { ...t, priority: idx < 12 ? 100 : 20 });
+      });
+    });
+    const pending = Array.from(tileMap.values()).filter(t => !this.cachedTileKeys.has(t.key));
+    this.totalTilesInJob = pending.length;
+    this.loadedTilesInJob = 0;
+    this.queue = pending.sort((a, b) => b.priority - a.priority);
+    this.emitProgress();
+
+    return new Promise(resolve => {
+      if (this.queue.length === 0) { resolve(this.getStatus()); return; }
+      const checkFinish = () => {
+        if (this.queue.length === 0 && this.activeWorkers === 0) resolve(this.getStatus());
+      };
+      const spawn = () => {
+        while (this.activeWorkers < this.maxConcurrency && this.queue.length > 0) {
+          const item = this.queue.shift();
+          if (this.cachedTileKeys.has(item.key)) continue;
+          this.inFlightKeys.add(item.key);
+          this.activeWorkers++;
+          this.fetchTile(item)
+            .then(() => { this.cachedTileKeys.add(item.key); this.loadedTilesInJob++; })
+            .catch(() => { this.failedTilesInJob++; })
+            .finally(() => {
+              this.inFlightKeys.delete(item.key);
+              this.activeWorkers--;
+              this.emitProgress();
+              spawn();
+              checkFinish();
+            });
+        }
+        checkFinish();
+      };
+      spawn();
+    });
+  }
+  prefetchAhead(currentCoord, bearingDeg, distanceMeters = 1200, zoom = 14) {
+    if (!currentCoord) return;
+    const ahead = getLookAheadCoord(currentCoord, bearingDeg, distanceMeters);
+    computeTilesForRoute([currentCoord, ahead], zoom, 1).forEach(t => {
+      if (!this.cachedTileKeys.has(t.key) && !this.inFlightKeys.has(t.key)) {
+        this.queue.unshift({ ...t, priority: 150 });
+      }
+    });
+    this.processQueue();
+  }
+  processQueue() {
+    while (this.activeWorkers < this.maxConcurrency && this.queue.length > 0) {
+      const item = this.queue.shift();
+      if (this.cachedTileKeys.has(item.key) || this.inFlightKeys.has(item.key)) continue;
+      this.inFlightKeys.add(item.key);
+      this.activeWorkers++;
+      this.fetchTile(item)
+        .then(() => { this.cachedTileKeys.add(item.key); })
+        .catch(() => {})
+        .finally(() => {
+          this.inFlightKeys.delete(item.key);
+          this.activeWorkers--;
+          this.processQueue();
+        });
+    }
+  }
+  async fetchTile(tile) {
+    const url = this.getTileUrl(tile.x, tile.y, tile.z);
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => resolve();
+      img.onerror = () => reject(new Error('tile load error'));
+      img.src = url;
+    });
+  }
+  getStatus() {
+    const total = this.totalTilesInJob;
+    const loaded = this.loadedTilesInJob;
+    const percent = total > 0 ? Math.min(100, Math.round((loaded / total) * 100)) : 100;
+    return { total, loaded, percent, ready: total === 0 || percent >= 95 };
+  }
+  emitProgress() {
+    if (this.onProgressCallback) this.onProgressCallback(this.getStatus());
+  }
+}
+const tilePreloader = new TilePreloader();
 
 async function fetchRealisticRoute(coordinates) {
   const maxChunk = 24;
@@ -2106,6 +2326,32 @@ async function buildJourney(points, sourceLabel) {
   await prepareBothRoutes(points);
   applyRouteData(currentRouteMode === 'nav' ? cachedNavRoute : cachedDirectRoute);
 
+  // Kích hoạt nạp trước bản đồ đa tầng (Corridor Preload)
+  const pBadge = document.getElementById('preloadBadge');
+  const pText = document.getElementById('preloadText');
+  if (pBadge && pText) {
+    pBadge.style.display = 'inline-flex';
+    pBadge.classList.remove('ready');
+    pBadge.style.opacity = '1';
+    pText.textContent = 'Đang tải trước bản đồ: 0%';
+  }
+  tilePreloader.onProgress(st => {
+    if (pText) {
+      pText.textContent = st.ready
+        ? 'Bản đồ sẵn sàng 100%'
+        : `Đang tải trước bản đồ: ${st.percent}% (${st.loaded}/${st.total} tiles)`;
+    }
+    if (st.ready && pBadge) {
+      pBadge.classList.add('ready');
+      clearTimeout(pBadge._fadeTimer);
+      pBadge._fadeTimer = setTimeout(() => {
+        pBadge.style.opacity = '0';
+        setTimeout(() => { pBadge.style.display = 'none'; }, 400);
+      }, 2800);
+    }
+  });
+  tilePreloader.preloadRoute(routeCoords);
+
   const listContent = document.getElementById('listContent');
   listContent.innerHTML = '';
 
@@ -2156,7 +2402,7 @@ async function buildJourney(points, sourceLabel) {
       <div class="l-item-meta">
         <span>
           ${fmtCoord(p)} 
-          <a href="https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lon}" target="_blank" class="gmap-link" title="${I18N[currentLang].openGmap}" onclick="event.stopPropagation()">🗺️ ${I18N[currentLang].openGmap}</a>
+          <a href="https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lon}" target="_blank" class="gmap-link" title="${I18N[currentLang].openGmap}" onclick="event.stopPropagation()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:text-bottom;margin-right:3px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>${I18N[currentLang].openGmap}</a>
         </span>
         ${i > 0 ? `<span class="l-item-dist">+ ${segDist[i].toFixed(2)} km</span>` : `<span class="l-item-dist" style="background:transparent;color:var(--muted)">${I18N[currentLang].startPoint}</span>`}
       </div>
@@ -2618,6 +2864,11 @@ function loop(now){
       summaryEl.classList.add('show');
     } else {
       setProgress(nextProg);
+    }
+
+    if (desiredCamPos && now - lastTilePrefetch > 1200) {
+      lastTilePrefetch = now;
+      tilePreloader.prefetchAhead(desiredCamPos, -map.getBearing(), 1200, 14);
     }
   }
 

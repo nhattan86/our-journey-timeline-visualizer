@@ -1,169 +1,168 @@
-# Hành Trình Yêu Thương (Our Journey - Timeline Visualizer)
+# Hanh Trinh Yeu Thuong (Our Journey - Timeline Visualizer)
 
-![Version](https://img.shields.io/badge/version-1.3-brightgreen?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-2.0.0-brightgreen?style=for-the-badge)
 ![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
-![MapLibre GL](https://img.shields.io/badge/MapLibre_GL-3.6.2-blue?style=for-the-badge)
+![MapLibre GL](https://img.shields.io/badge/MapLibre_GL-5.2.0-blue?style=for-the-badge)
+![Tone.js](https://img.shields.io/badge/Tone.js-15.0.4-orange?style=for-the-badge)
+![Tests](https://img.shields.io/badge/Formal_Tests-27%2F27_Passed-success?style=for-the-badge)
+![Deployment](https://img.shields.io/badge/GitHub_Pages-Live-success?style=for-the-badge)
 
-Ứng dụng web tương tác giúp trực quan hóa dữ liệu bản đồ `.kml` và `.kmz` thành chuyến đi 3D mượt mà, bám sát từng cung đường thực tế. Được xây dựng hoàn toàn bằng công nghệ Client-side (Vanilla Web), ứng dụng hỗ trợ trình chiếu lộ trình kỷ niệm, tự động tính toán thông số quãng đường và tích hợp hệ thống âm thanh nền đa dạng.
+Ung dung web tuong tac truc quan hoa du lieu ban do `.kml` va `.kmz` thanh chuyen di 3D bam sat tung cung duong thuc te. Du an duoc thiet ke theo kien truc **Single-Source Standalone Application** toi uu hoa cho GitHub Pages, tich hop **Dong co Tai truoc Ban do Thong minh (Intelligent Map Tile Preloader)** va he thong **Kiem thu Hinh thuc (Formal Verification Testing)** dat tieu chuan 100% Pass.
 
----
-
-## Tính Năng Chính
-
-### 1. Bản đồ 3D và hiển thị đa tầng (Multi-layer Map)
-- Sử dụng MapLibre GL 3D Engine hỗ trợ hiển thị mượt mà, tùy chỉnh góc nghiêng (pitch) và xoay tự do (bearing).
-- Hỗ trợ lựa chọn 4 nguồn bản đồ khác nhau, khắc phục triệt để lỗi chặn kết nối (CORS / HTTP 403):
-  - **CartoDB Pastel Voyager** (Mặc định): Tông màu pastel nhẹ nhàng, thanh lịch.
-  - **Google Maps**: Bản đồ đường phố độ nét cao, hiển thị tiếng Việt chi tiết.
-  - **ESRI World Street Map**: Bản đồ giao thông quốc tế ổn định.
-  - **Mapbox Streets v12**: Tùy biến thông qua Mapbox Access Token cá nhân.
-
-### 2. Hai chế độ di chuyển (Routing Modes)
-- **Xe chạy (Navigation)**: Tự động kết nối OSRM (Open Source Routing Machine) và Mapbox Directions API để vẽ đường đi thực tế uốn lượn theo mạng lưới giao thông đường bộ với cơ chế tải song song siêu tốc.
-- **Chim bay (Direct)**: Nối thẳng các tọa độ địa lý theo thuật toán Haversine, phù hợp với hành trình bay hoặc các chặng di chuyển thẳng.
-- Bộ lọc nội suy (Interpolation) giúp chuyển động của icon dẫn đường luôn êm ái qua từng góc cua.
-
-### 3. Điều hướng và góc nhìn Camera
-- Chế độ tự động bám theo tâm điểm (Auto Camera Tracking) giữ khung hình luôn tập trung vào vị trí hiện tại của hành trình với cơ chế đón đầu thông minh.
-- Người dùng có thể chủ động kéo thả hoặc phóng to, thu nhỏ bản đồ bất kỳ lúc nào; hệ thống có nút căn giữa (Recenter) để tiếp tục bám theo lộ trình.
-- La bàn (Compass) tự động quay theo hướng nhìn thực tế và hỗ trợ click để đưa bản đồ quay về hướng Bắc.
-- Cụm nút phóng to (+) và thu nhỏ (-) trực quan ngay trên giao diện.
-
-### 4. Hiệu ứng thị giác & Pháo hoa chào mừng (Visual Effects & Celebration)
-- **Hiệu ứng trái tim thở (Elastic Heartbeat Pop)**: Khi chạm đến bất kỳ trạm dừng nào, biểu tượng trái tim tự động phóng to lên ~220%, tỏa hào quang neon kép (Rose Pink & Gold) cùng sóng xung kích (Shockwave) lan tỏa.
-- **Pháo hoa hạt ánh sáng hiện đại (Canvas Particle Fireworks)**: Động cơ Canvas 2D phần cứng 60fps bắn chùm pháo hoa rực rỡ từ tâm trái tim với 4 loại hạt ánh sáng (tia sáng streamer, ngôi sao 4 cánh xoay ✨, trái tim mini ❤️, và bụi vàng lấp lánh), kết hợp hòa trộn quang học `lighter` siêu thực.
-- **Pháo hoa kết thúc hành trình (Grand Finale)**: Tự động kích hoạt màn bắn pháo hoa 3 đợt liên hoàn khi đến điểm đích cuối cùng.
-- **Đồng bộ hóa Marker địa điểm**: Marker trạm dừng trên bản đồ cũng đồng thời phát xung nhịp hào quang khi trái tim chạm mốc.
-
-### 5. Phân tích dữ liệu và thống kê
-- **Thanh thông số thời gian thực (Stat Bar)**:
-  - Tổng số lượng địa điểm trong hành trình.
-  - Tổng quãng đường của toàn bộ chuyến đi (km).
-  - Số km đã hoàn thành theo thời gian thực.
-  - Tỷ lệ phần trăm tiến độ chuyến đi.
-- **Thẻ thông tin chi tiết (Stop Card)**:
-  - Thứ tự điểm, tên địa điểm và tọa độ GPS (kinh độ, vĩ độ).
-  - Khoảng cách giữa hai điểm liên tiếp (km) và khoảng cách tích lũy.
-- **Điểm mốc quan trọng (Featured Points)**:
-  - Cho phép ghim tối đa 2 điểm đặc biệt để đo khoảng cách chim bay trực tiếp giữa hai mốc này.
-- **Tổng kết hành trình (Journey Summary)**:
-  - Tự động hiển thị bảng thông tin tổng kết khi chuyến đi kết thúc và cung cấp nút xem lại từ đầu.
-
-### 6. Quản lý danh sách địa điểm (Sidebar Panel)
-- Liệt kê toàn bộ các điểm đến theo đúng thứ tự hành trình kèm khoảng cách chặng.
-- Click vào điểm bất kỳ để di chuyển camera tức thì tới vị trí đó.
-- Tích hợp nút mở nhanh tọa độ trực tiếp trên Google Maps.
-
-### 7. Hệ thống âm thanh nền đa dạng
-- **Tone.js**: Tự động sinh hợp âm thư giãn, êm dịu theo phong cách Lofi Ambient.
-- **Lofi Chill & Piano**: Các bản nhạc mẫu tích hợp sẵn.
-- **Phát nhạc theo liên kết**: Hỗ trợ nhập link video YouTube (chạy ngầm thông qua YouTube IFrame Player API) hoặc đường dẫn trực tiếp tới file `.mp3`.
-
-### 8. Hỗ trợ song ngữ (Tiếng Việt & English)
-- Nút chuyển ngôn ngữ hình lá cờ (🇻🇳 / 🇬🇧) ngay trên thanh điều khiển.
-- Chuyển đổi toàn diện toàn bộ giao diện: tiêu đề, mô tả, thanh thông số, chú thích, hộp thoại nhạc, tùy chọn bản đồ, thông báo toast và các nhãn địa lý.
-- Tự động lưu tùy chọn ngôn ngữ vào trình duyệt (localStorage).
-
-### 9. Tiện ích bổ sung & Lộ trình mẫu
-- **Khẳng định chủ quyền biển đảo**: Đánh dấu trực quan Quần đảo Hoàng Sa, Quần đảo Trường Sa, Biển Đông và các đảo tiêu biểu thuộc chủ quyền Việt Nam.
-- **Lộ trình mẫu Xuyên Việt**: Tích hợp sẵn nút trải nghiệm nhanh hành trình 9 danh lam thắng cảnh dọc Việt Nam mà không cần chuẩn bị trước tệp KML.
-- Chụp ảnh khung cảnh (Screenshot): Xuất góc nhìn 3D hiện tại thành tệp ảnh `.png` sắc nét.
-- Chế độ Toàn màn hình (Fullscreen).
-- Thanh trượt thời gian (Timeline scrubber) kèm danh sách các điểm mốc (ticks) trực quan.
-- Tùy chỉnh tốc độ phát linh hoạt (1x, 1.5x, 2x, 0.4x).
+- **Truy cap truc tiep tren GitHub Pages**: [https://nhattan86.github.io/our-journey-timeline-visualizer/](https://nhattan86.github.io/our-journey-timeline-visualizer/)
 
 ---
 
-## Công Nghệ Sử Dụng
+## Huong Dan Cach Chay Ung Dung (Quick Start)
 
-Dự án hoạt động hoàn toàn ở phía trình duyệt (Client-side 100%), không yêu cầu môi trường Node.js hay máy chủ trung gian:
+### Cach 1: Truy cap truc tuyen (GitHub Pages)
+Truy cap truc tiep vao dia chi:
+[https://nhattan86.github.io/our-journey-timeline-visualizer/](https://nhattan86.github.io/our-journey-timeline-visualizer/)
 
-- **Map Engine**: [MapLibre GL JS (v3.6.2)](https://maplibre.org/)
-- **Giải nén tệp tin**: [JSZip](https://stuk.github.io/jszip/) (đọc tệp `.kmz` và trích xuất file `.kml`)
-- **Xử lý âm thanh**: [Tone.js](https://tonejs.github.io/) và YouTube IFrame Player API
-- **Routing API**: OSRM (Open Source Routing Machine) và Mapbox Directions API
-- **Nền tảng**: HTML5, CSS3, Vanilla JavaScript (ES6+)
+Tep `index.html` se tu dong chuyen huong sang `our-journey.html` ngay lap tuc ma khong co do tre.
 
 ---
 
-## Hướng Dẫn Sử Dụng
+### Cach 2: Mo truc tiep cuc bo (Offline Standalone)
+Nho kien truc doc lap khong phu thuoc bundler:
+1. Tai ma nguon hoac clone repository ve may tinh:
+   ```bash
+   git clone https://github.com/nhattan86/our-journey-timeline-visualizer.git
+   cd our-journey-timeline-visualizer
+   ```
+2. Nhap dup chuot truc tiep vao tep **`our-journey.html`** de mo bang bat ky trinh duyet hien dai nao (Google Chrome, Microsoft Edge, Mozilla Firefox, Safari).
+3. Bam nut **"Kham pha lo trinh mau"** hoac **"Doi ban do"** de nap file `.kml` / `.kmz` cua ban.
 
-1. Tải toàn bộ mã nguồn về máy tính hoặc clone repository.
-2. Mở trực tiếp tệp `our-journey.html` bằng bất kỳ trình duyệt hiện đại nào (Chrome, Edge, Safari, Firefox...).
-3. Nhấn nút **Tải bản đồ lên** (hoặc **Đổi bản đồ**) để chọn tệp `.kml` hoặc `.kmz` (xuất từ Google My Maps, Google Earth hoặc các ứng dụng GPS tracker).
-4. Hệ thống sẽ tự động phân tích dữ liệu, vẽ đường đi và sẵn sàng trình chiếu.
+---
 
-### Hệ Thống Phím Tắt
+### Cach 3: Chay qua Local Web Server
+Neu ban muon phat trien ma nguon hoac kiem thu qua may chu cuc bo:
+```bash
+# Cach A: Su dung Python
+python -m http.server 8000
 
-| Phím | Chức Năng |
+# Cach B: Su dung Node npx serve
+npx serve .
+```
+Mo trinh duyet tai dia chi `http://localhost:8000/our-journey.html`.
+
+---
+
+## Quy Trinh Trien Khai & Tu Dong Hoa (Makefile)
+
+Du an duoc trang bi `Makefile` chuan hoa moi thao tac kiem thu, kiem tra dong bo va day code len GitHub Pages:
+
+| Lenh | Mo ta chi tiet |
 | :--- | :--- |
-| `Space` | Phát / Tạm dừng hành trình |
-| `->` (Mũi tên phải) | Chuyển đến địa điểm kế tiếp |
-| `<-` (Mũi tên trái) | Quay lại địa điểm trước đó |
-| `Home` | Quay về điểm xuất phát ban đầu |
-| `End` | Chuyển nhanh tới điểm kết thúc hành trình |
-| `Escape` | Đóng nhanh các hộp thoại (Nhạc, Bản đồ, Danh sách) |
-| `M` | Mở bảng điều khiển âm nhạc |
-| `F` | Bật / Tắt chế độ toàn màn hình |
-| `Kéo chuột trái` | Di chuyển bản đồ (Pan) |
-| `Kéo chuột phải` | Xoay hướng nhìn và thay đổi độ nghiêng 3D (Bearing / Pitch) |
-| `Cuộn chuột` | Phóng to / Thu nhỏ (Zoom) |
+| `make test` | Chay toan bo 27 formal test cases tu dong bang Node.js Test Runner |
+| `make build` | Kiem tra toan ven ma nguon `our-journey.html` va tep dieu huong `index.html` |
+| `make status` | Hien thi trang thai Git hien thoi |
+| `make deploy` | Tu dong: Chay test -> Chay build -> Stage toan bo (`git add -A`) -> Commit -> Push len `origin main` |
+| `make clean` | Don dep cac tep tam thoi |
+| `make help` | Hien thi huong dan su dung cac lenh |
+
+Vi du trien khai nhanh voi commit tuy chinh:
+```bash
+make deploy COMMIT_MSG="Cap nhat tinh nang va toi uu hoa hieu nang"
+```
 
 ---
 
-## Nhật Ký Phiên Bản (Changelog)
+## Bo Kiem Thu Hinh Thuc (Formal Test Suite)
 
-<details open>
-<summary><b>Xem chi tiết lịch sử cập nhật</b></summary>
-<br>
+Dua tren triet ly **Falsificationism (Karl Popper)** va tieu chuan **ISO/IEC/IEEE 29119**, he thong kiem thu duoc to chuc doc lap trong thu muc `tests/`:
 
-### Phiên bản 1.3
-- **Tối ưu hóa hiệu năng & tiết kiệm pin (Performance & Battery)**:
-  - Tải định tuyến song song (`Promise.all`) cho các chunk OSRM / Mapbox, giảm 60-70% thời gian xử lý lộ trình dài.
-  - Tối ưu vòng lặp render với cơ chế **Smart Idle Damping**, ngưng tính toán camera lerp khi xe/camera đã ổn định vị trí.
-  - Tự động tắt và giải phóng luồng âm thanh Tone.js khi tạm dừng hoặc tắt nhạc.
-- **Bảo mật dữ liệu (Security Hardening)**:
-  - Khử triệt để nguy cơ tấn công XSS từ các tệp KML/KMZ không rõ nguồn gốc bằng cơ chế mã hóa chuỗi HTML an toàn (`escapeHtml`).
-- **Mở rộng định dạng KML**:
-  - Tự động nhận diện và trích xuất dữ liệu từ các thẻ `<LineString>` / GPS track log khi file KML không chứa thẻ `<Point>` độc lập.
-- **Nâng cấp trải nghiệm người dùng (UX & Shortcuts)**:
-  - Sửa lỗi xung đột phím tắt khi người dùng đang nhập nội dung trong ô input (URL YouTube / Mapbox Token).
-  - Bổ sung phím tắt `Escape` (đóng hộp thoại) và hỗ trợ click ra vùng backdrop tối để đóng modal.
-  - Bổ sung phím tắt `Home` (về đầu) và `End` (về cuối).
-  - Tích hợp nút xem nhanh trạm hiện tại trên Google Maps ngay trong thẻ Stop Card.
-  - Tinh chỉnh bố cục CSS Responsive cho màn hình di động nhỏ (<390px).
+```bash
+# Chay kiem thu toan bo
+npm test
 
-### Phiên bản 1.2
-- **Hiệu ứng Trái tim phóng to & Pháo hoa hạt ánh sáng**: Khi icon trái tim di chuyển tới bất kỳ mốc điểm dừng nào, biểu tượng tim sẽ phóng to rực rỡ với nhịp đập đôi (Elastic Heartbeat Pop ~220%), phát sóng xung kích (Shockwave) kèm màn bắn pháo hoa hạt ánh sáng đa sắc (Canvas Particle Fireworks 60fps) từ tâm trái tim. Tự động kích hoạt màn pháo hoa đại tiệc (Grand Finale) 3 đợt khi kết thúc hành trình.
-- **Hỗ trợ song ngữ (VI / EN)**: Nút chuyển đổi ngôn ngữ cờ (Việt Nam 🇻🇳 / UK 🇬🇧) chuyển đổi toàn diện toàn bộ nhãn, thông số, giao diện.
-- **Bổ sung lộ trình mẫu**: Nút trải nghiệm nhanh hành trình danh thắng xuyên Việt mà không cần chuẩn bị tệp KML.
+# Hoac chay truc tiep qua Node.js
+node --test tests/*.test.js
+```
 
-### Phiên bản 1.1
-- **Nâng cấp Map Engine**: Chuyển đổi từ cơ chế render gạch Three.js sang MapLibre GL JS 3D Engine, nâng cao hiệu năng và độ ổn định trên mọi thiết bị.
-- **Đa dạng lớp bản đồ**: Bổ sung 4 nguồn bản đồ (CartoDB Pastel Voyager, Google Maps, ESRI World Street, Mapbox Streets v12), xử lý triệt để lỗi 403 từ OpenStreetMap cũ.
-- **Bổ sung chế độ Xe chạy và Chim bay**: Tích hợp định tuyến thực tế từ OSRM / Mapbox giúp đường đi uốn lượn theo mạng lưới giao thông thực tế.
-- **Bảng số liệu thời gian thực**: Bổ sung thanh thống kê (số km đã đi, tỷ lệ hoàn thành hành trình), thẻ thông tin chi tiết từng chặng và hộp thoại tổng kết chuyến đi.
-- **Tối ưu hóa Camera & Điều hướng**: Bổ sung la bàn tương tác, nút khóa theo dõi (Recenter), cụm phím phóng to/thu nhỏ chuyên dụng.
-- **Nâng cấp hệ thống âm thanh**: Bổ sung các bản nhạc mẫu và cơ chế phát nhạc YouTube chìm ổn định hơn.
-- **Tối ưu hóa bộ phân tích KML/KMZ**: Đọc dữ liệu nhanh hơn, hỗ trợ màu sắc và giải nén mượt mà.
-
-### Phiên bản 1.0
-- Khởi tạo dự án trực quan hóa hành trình với Three.js và OpenStreetMap.
-- Hỗ trợ đọc tệp `.kml` và `.kmz`.
-- Trình phát nhạc Tone.js cơ bản và tính năng chụp ảnh khung cảnh.
-
-</details>
+Ket qua nghiem thu: **27/27 Test Cases Dat Chuan (100% Pass) trong ~350ms:**
+- `TC-GEO-01` den `TC-GEO-07`: Giai thuat Haversine, Web Mercator Tile conversion, Route Corridor calculation, Lookahead vector.
+- `TC-KML-01` den `TC-KML-06`: Parser KML/KMZ Placemarks, LineString fallback, chong XSS (Cross-Site Scripting), kiem tra bien du lieu.
+- `TC-ROU-01` den `TC-ROU-04`: Dinh tuyen OSRM theo chunking $\le 24$ diem, bo nho dem API, co che fallback chim bay tu dong khi mat mang.
+- `TC-PRE-01` den `TC-PRE-04`: Dong co Tile Preloader da tang, URL resolver cho 4 kieu ban do, Dynamic Lookahead Prefetch.
+- `TC-FSM-01` den `TC-FSM-06`: May trang thai huu han (FSM), scrubbing muot ma, tim kiem nhi phan toa do noi suy.
 
 ---
 
-## Giấy Phép (License)
+## Cac Tinh Nang Cong Nghe Cot Loi
 
-Dự án được phát hành dưới giấy phép mã nguồn mở. Bạn có thể tự do sử dụng, chỉnh sửa và phát triển cho mục đích cá nhân.
+### 1. Dong Co Tai Truoc Ban Do Thong Minh (Tile Preloader Engine)
+- **Triet tieu hien tuong chop trang ban do**: Tu dong tinh toan toa do cac manh ban do Web Mercator $(x, y, z)$ doc theo hanh lang tuyen duong va nap truoc vao cache trinh duyet qua worker pool dong thoi ($\le 6$ workers).
+- **Don dau goc nhin (Dynamic Lookahead Prefetch)**: Khi camera di chuyen, thu vien tu dong tinh toan vector huong nhin va tai truoc cac tile phia truoc tu $500\text{m} - 1500\text{m}$.
+- **Hien thi tien trinh tai sach se**: Badge trang thai hien thi ro rang ty le nap: `Dang tai truoc ban do: X%` va tu dong an sau khi san sang 100%.
+
+### 2. Ban Do 3D MapLibre GL v5.2.0 WebGL 2.0
+- Tang toc render GPU, giu khung hinh on dinh 60fps khi camera luot tren dia hinh 3D nghieng $45^\circ$.
+- Tich hop 4 nguon ban do tin cay:
+  - **CartoDB Pastel Voyager** (Mac dinh): Gam mau pastel êm diu.
+  - **Google Maps**: Ban do giao thong chi tiet, tieng Viet.
+  - **ESRI World Street Map**: He thong ban do toan cau khong loi 403.
+  - **Mapbox Streets v12**: Ho tro Access Token ca nhan.
+
+### 3. Tuan Thu Chu Quyen Bien Dao Viet Nam
+- Hien thi day du va trang trong quan dao **Hoang Sa** va **Truong Sa** thuoc chu quyen Viet Nam tren moi kieu hien thi ban do.
+
+### 4. Am Thanh & Hieu Ung Hat Anh Sang (Particle Engine)
+- Tich hop **Tone.js v15.0.4** tao giai dieu ambient sinh dong bang AudioWorklet.
+- Ho tro ket noi YouTube Iframe API va nhac MP3 tuy chon.
+- Particle Pool tuan hoan bo nho, loai bo hien tuong khuc xa bo nho do Garbage Collection khi ban phao hoa mung ve dich.
 
 ---
 
-<h3 align="center">
-  <i>build with love by nhattan ❤️</i>
-</h3>
+## Bang Phim Tat Dieu Khien
+
+| Phim | Chuc Nang |
+| :--- | :--- |
+| `Space` | Phat / Tam dung hanh trinh |
+| `->` (Mui ten phai) | Chuyen den moc dia diem ke tiep |
+| `<-` (Mui ten trai) | Quay lai moc dia diem truoc do |
+| `Home` | Quay ve diem khoi hanh ban dau |
+| `End` | Chuyen nhanh den diem ket thuc hanh trinh |
+| `Escape` | Dong cac hop thoai (Nhac, Kieu ban do, Danh sach) |
+| `M` | Mo bang dieu khien am nhac |
+| `F` | Bat / Tat che do toan man hinh |
+| `Keo chuot trai` | Di chuyen ban do (Pan) |
+| `Keo chuot phai` | Xoay goc nhin va do nghieng 3D (Bearing / Pitch) |
+| `Cuon chuot` | Phong to / Thu nho (Zoom) |
+
+---
+
+## Cau Truc Thu Muc Du An
+
+```
+our-journey-timeline-visualizer/
+├── .github/
+│   └── workflows/
+│       └── deploy.yml        # GitHub Actions tu dong deploy GitHub Pages
+├── .agents/
+│   └── rules/
+│       └── engineering-rules.md  # Bo quy tac ky thuat va chuan muc ma nguon
+├── scripts/
+│   └── build-standalone.js   # Script kiem tra toan ven ung dung standalone
+├── tests/
+│   ├── engine.js             # Engine giai thuat toan hoc & FSM dung cho test
+│   ├── geo-math.test.js      # Test toa do, Haversine va Web Mercator
+│   ├── kml-parser.test.js    # Test phan tich cu phap KML/KMZ & chong XSS
+│   ├── router.test.js        # Test dinh tuyen thuc te & fallback chim bay
+│   ├── tile-preloader.test.js# Test tai truoc tile ban do & worker pool
+│   └── timeline-fsm.test.js  # Test may trang thai FSM & noi suy thoi gian
+├── our-journey.html          # FILE CHINH: Toan bo logic, giao dien va 3D engine
+├── index.html                # Entrypoint dieu huong nhanh 0ms phuc vu GitHub Pages
+├── Makefile                  # Tu dong hoa test, build va deploy len GitHub
+├── package.json              # Khai bao metadata va lenh npm test, npm run build
+├── rule.md                   # Ban quy tac danh cho ky su va AI agent
+└── README.md                 # Tai lieu ky thuat va huong dan su dung
+```
+
+---
+
+## Giay Phep (License)
+
+Du an duoc phat hanh theo giay phep ma nguon mo **MIT License**.

@@ -1,0 +1,22 @@
+{
+  "name": "our-journey-timeline-visualizer",
+  "version": "2.0.0",
+  "description": "3D Timeline Journey Visualizer with Intelligent Map Tile Preloader and High-Performance Animation Engine",
+  "type": "module",
+  "main": "index.html",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "build": "node scripts/build-standalone.js"
+  },
+  "keywords": [
+    "maplibre",
+    "timeline",
+    "kml",
+    "kmz",
+    "tile-preloader",
+    "performance",
+    "falsificationism"
+  ],
+  "author": "nhattan",
+  "license": "MIT"
+}
