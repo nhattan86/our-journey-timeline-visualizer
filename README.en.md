@@ -5,7 +5,7 @@
 
 # Our Journey - Timeline Visualizer
 
-![Version](https://img.shields.io/badge/version-2.0.0-brightgreen?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-2.1.0-brightgreen?style=for-the-badge)
 ![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
@@ -106,6 +106,20 @@ Verification Outcome: **27/27 Test Cases Passed (100% Pass) in ~300ms:**
 - Supports YouTube Iframe API and custom MP3 streams.
 - **Particle Pool Pattern** recycling memory allocations to eliminate Garbage Collection stutter during celebratory fireworks.
 
+### 5. Performance & UI Enhancements (v2.1.0)
+- **Camera Adaptive Lerp**: Dynamic damping coefficient automatically adjusts based on distance — fast when far, smooth when approaching — eliminating jerky camera snapping.
+- **DOM Throttling**: The `setProgress` routine updates DOM text nodes strictly when milestone indicators change, reducing render loop overhead by over 80%.
+- **Count-up Animation**: Key metrics (total distance in km, milestone counts) animate with a smooth rolling counter upon loading new journey datasets.
+- **Tick Tooltips**: Hovering over timeline ticks displays location name tooltips on mouseover.
+- **Realtime Remaining Distance**: The timeline footer displays remaining distance updated in real time during animation.
+
+### 6. New Features (v2.1.0)
+- **Live Location Search**: Stops panel features an instant filter search bar with real-time text highlighting (`<mark>`) and match count badges.
+- **Keyboard Shortcut Guide**: Clean `?` button on the top toolbar opens a lightweight modal overlay with keyboard shortcuts.
+- **Drag-and-Drop Visual**: Dragging KML/KMZ files over the viewport activates an animated pulsating dropzone overlay.
+- **Preload Badge Ring Progress**: Floating status badge at top-right displays an SVG circular progress ring, fading out smoothly upon reaching 100% readiness.
+- **Welcome Screen Animation**: Interactive welcome view with SVG route path draw-in animation and dynamic dot-grid backdrop.
+
 ---
 
 ## Keyboard Shortcuts
@@ -117,7 +131,8 @@ Verification Outcome: **27/27 Test Cases Passed (100% Pass) in ~300ms:**
 | `<-` (Left Arrow) | Jump to previous stop |
 | `Home` | Return to starting point |
 | `End` | Jump to final destination |
-| `Escape` | Close active dialogs (Music, Map Layer, List) |
+| `Escape` | Close active dialogs (Music, Map Layer, List, Help) |
+| `?` | Toggle keyboard shortcut guide overlay |
 | `M` | Open background music settings |
 | `F` | Toggle fullscreen mode |
 | `Left Click + Drag` | Pan map view |
@@ -163,5 +178,5 @@ This project is licensed under the open-source **MIT License**.
 ---
 
 <h3 align="center">
-  <i>built with love by nhattan ❤️</i>
+  <i>built with love by nhattan</i>
 </h3>

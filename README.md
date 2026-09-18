@@ -5,7 +5,7 @@
 
 # Hành Trình Yêu Thương (Our Journey - Timeline Visualizer)
 
-![Version](https://img.shields.io/badge/version-2.0.0-brightgreen?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-2.1.0-brightgreen?style=for-the-badge)
 ![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
@@ -106,6 +106,20 @@ Kết quả nghiệm thu: **27/27 Test Cases Đạt Chuẩn (100% Pass) trong ~3
 - Hỗ trợ kết nối YouTube Iframe API và nhạc MP3 tùy chọn.
 - Áp dụng mô hình **Particle Pool Pattern** tuần hoàn bộ nhớ, loại bỏ hoàn toàn hiện tượng khựng khung hình do Garbage Collection khi bắn pháo hoa mừng về đích.
 
+### 5. Tối ưu Hiệu Năng & Giao Diện (v2.1.0)
+- **Camera Adaptive Lerp**: Thành phần damping tự điều chỉnh hệ số theo khoảng cách — nhanh khi xa, mượt khi gần — loại bỏ giật cứng khi camera bám đón.
+- **DOM Throttling**: Hàm `setProgress` chỉ cập nhật DOM text khi mốc dừng thực sự thay đổi, giảm tải vòng render xuống hơn 80%.
+- **Count-up Animation**: Số liệu thống kê (km, số điểm) tự động tăng dần khi nạp dữ liệu mới.
+- **Tick Tooltip**: Di chuột vào mốc trên thanh timeline hiển thị tên địa điểm dạng tooltip.
+- **km Còn Lại**: Thanh timeline hiển thị khoảng cách còn lại cập nhật theo thời gian thực.
+
+### 6. Tính Năng Mới (v2.1.0)
+- **Tìm kiếm Địa Điểm (Live Search)**: Panel danh sách có ô tìm kiếm realtime, tự động highlight từ khớp trong tên địa điểm.
+- **Keyboard Shortcut Guide**: Nút `?` trên thanh công cụ mở bảng phím tắt dạng overlay gọn nhẹ.
+- **Drag-and-Drop Visual**: Khi kéo file vào cửa sổ trình duyệt, hiện overlay có animation hướng dẫn thả file.
+- **Preload Badge Ring Progress**: Badge tải trước hiển thị dạng floating góc trên phải với vòng progress SVG, tự ẩn sau khi sẵn sàng.
+- **Welcome Screen Animation**: Màn hình chào có hoạt ảnh vẽ đường lộ trình trên SVG và nền chấm động.
+
 ---
 
 ## Bảng Phím Tắt Điều Khiển
@@ -117,7 +131,8 @@ Kết quả nghiệm thu: **27/27 Test Cases Đạt Chuẩn (100% Pass) trong ~3
 | `<-` (Mũi tên trái) | Quay lại mốc địa điểm trước đó |
 | `Home` | Quay về điểm khởi hành ban đầu |
 | `End` | Chuyển nhanh đến điểm kết thúc hành trình |
-| `Escape` | Đóng các hộp thoại (Nhạc, Kiểu bản đồ, Danh sách) |
+| `Escape` | Đóng các hộp thoại (Nhạc, Kiểu bản đồ, Danh sách, Trợ giúp) |
+| `?` | Bật / Tắt bảng hướng dẫn phím tắt |
 | `M` | Mở bảng điều khiển âm nhạc |
 | `F` | Bật / Tắt chế độ toàn màn hình |
 | `Kéo chuột trái` | Di chuyển bản đồ (Pan) |
@@ -150,7 +165,8 @@ our-journey-timeline-visualizer/
 ├── Makefile                  # Tự động hóa test, build và deploy lên GitHub
 ├── package.json              # Khai báo metadata và lệnh npm test, npm run build
 ├── rule.md                   # Bản quy tắc dành cho kỹ sư và AI agent
-└── README.md                 # Tài liệu kỹ thuật tiếng Việt có dấu chuẩn
+├── README.md                 # Tài liệu kỹ thuật tiếng Việt có dấu chuẩn
+└── README.en.md              # Tài liệu kỹ thuật tiếng Anh đồng bộ
 ```
 
 ---
@@ -162,5 +178,5 @@ Dự án được phát hành theo giấy phép mã nguồn mở **MIT License**
 ---
 
 <h3 align="center">
-  <i>built with love by nhattan ❤️</i>
+  <i>built with love by nhattan</i>
 </h3>

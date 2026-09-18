@@ -81,6 +81,11 @@ $$\mathcal{TC} = \langle S_{pre}, I, E, S_{post}, \mathcal{O} \rangle$$
 5. **Do Phuc Tap Tuan Hoan (Cyclomatic Complexity - $V(G)$):**
    - Moi ham moi hoac sau refactor phai tuan thu $V(G) \le 5$. Tuan thu nguyen tac trach nhiem don nhat (Single Responsibility Principle).
 
+6. **Dong Bo Tai Lieu Song Ngu (Bilingual Documentation Synchronization):**
+   - Moi khi bo sung tinh nang, toi uu hoa, refactor ma nguon hoac cap nhat `README.md` (Tieng Viet), **BAT BUOC phai cap nhat dong bo ca `README.en.md` (Tieng Anh)**.
+   - Noi dung can dong bo chat che gom: so hieu phien ban (version badge), mo ta kien truc, danh sach tinh nang moi (features), bang phim tat va chi tiet ky thuat.
+   - Tuyet doi khong de lech pha thong tin hoac de ban tieng Anh bi lac hau so voi ban tieng Viet.
+
 ---
 
 ## IV. QUY TRINH DEPLOY & CAM KET TOAN VEN (DEPLOYMENT & COMMIT PROTOCOL)
@@ -90,12 +95,14 @@ Truoc khi ban giao cong viec va day ma nguon len GitHub:
 1. **Kiem thu va Kiem tra Toan ven:**
    - Chay `make test` de kiem tra 27/27 test cases.
    - Chay `make build` de kiem tra tinh toan ven cua `our-journey.html` va `index.html`.
-2. **Cam ket Commit Day Du (Commit Everything):**
+2. **Dong Bo Tai Lieu Song Ngu (README.md & README.en.md):**
+   - Kiem tra va dam bao ca `README.md` va `README.en.md` deu da duoc cap nhat dong bo ve phien ban, tinh nang moi va huong dan su dung truoc khi commit.
+3. **Cam ket Commit Day Du (Commit Everything):**
    - Bat buoc thuc hien `git add -A` de dua toan bo cac tep sua doi va tep moi vao staging area.
    - Khong de sot bat ky tep untracked hay thay doi dang do nao truoc khi push.
-3. **Ngon Ngu Commit Message:**
+4. **Ngon Ngu Commit Message:**
    - Thong diep commit bat buoc phai viet bang tieng Anh ro rang, chuyen nghiep (uu tien format Conventional Commits nhu `feat: ...`, `fix: ...`, `docs: ...`).
-4. **Thuc thi Deploy:**
+5. **Thuc thi Deploy:**
    - Chay `make deploy` de thuc hien chuoi hanh dong tu dong: Test -> Build -> Stage All -> Commit bang tieng Anh -> Push `origin main`.
    - Xac nhan kho luu tru GitHub da nhan day du commit moi nhat.
 

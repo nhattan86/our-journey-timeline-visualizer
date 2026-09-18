@@ -32,3 +32,7 @@ Please strictly follow the rules defined in `rule.md` at the workspace root:
    - Maintain 60fps performance without gray/blank tile flashing.
    - Always preserve the Tile Preloader Engine (Web Mercator tile math, corridor preloading, lookahead prefetching).
    - Use Particle Pool Pattern for Canvas 2D fireworks to prevent Garbage Collection pauses.
+
+7. **BILINGUAL DOCUMENTATION SYNCHRONIZATION:**
+   - Whenever features are added, performance optimized, or `README.md` (Vietnamese) is updated, **MUST simultaneously update `README.en.md` (English)** with identical version numbers, feature descriptions, keyboard shortcuts, and structural notes.
+   - Never allow English documentation to drift out of sync.
